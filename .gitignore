@@ -8,3 +8,6 @@
 *.synctex.gz
 *.out
 
+# BibTeX
+*.bbl
+*.blg
