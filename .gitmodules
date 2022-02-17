@@ -4,3 +4,6 @@
 [submodule "hw/hw2-1"]
 	path = hw/hw2-1
 	url = git@github.com:briancpark/cs267-hw2-1.git
+[submodule "hw/hw2-2"]
+	path = hw/hw2-2
+	url = git@github.com:briancpark/cs267-hw2-2.git
