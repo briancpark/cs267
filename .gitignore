@@ -4,7 +4,7 @@
 # LaTeX files
 *.aux
 *.log
-*.pdf
+hw*.pdf
 *.synctex.gz
 *.out
 *.pyg
