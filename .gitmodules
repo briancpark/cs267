@@ -7,3 +7,6 @@
 [submodule "hw/hw2-2"]
 	path = hw/hw2-2
 	url = git@github.com:briancpark/cs267-hw2-2.git
+[submodule "hw/hw2-3"]
+	path = hw/hw2-3
+	url = git@github.com:briancpark/cs267-hw2-3.git
