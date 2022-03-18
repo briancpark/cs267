@@ -5,6 +5,7 @@
 *.aux
 *.log
 hw*.pdf
+proposal.pdf
 *.synctex.gz
 *.out
 *.pyg
