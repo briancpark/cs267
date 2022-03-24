@@ -10,6 +10,7 @@
 \usepackage{algorithmicx}
 \usepackage[table]{xcolor} % <==========================================
 \usepackage{algpseudocode}
+
 \usepackage{graphicx}
 \usepackage[margin=0.70in]{geometry}
 \usepackage{listings}
@@ -48,21 +49,21 @@ Our algorithm is different from ~\cite{10.1007/s10586-018-2810-y} in many ways. 
 \label{alg:algorithm1}
 \caption{Matrix Multiplication Algorithm, modified from ~\cite{10.1007/s10586-018-2810-y}}
 \begin{algorithmic}
-    \REQUIRE Matrix $A$,$B$,$C$ in  column-order
-    \REQUIRE Matrix Size $lda$
-    \REQUIRE $k_b$, $m_b$, $m_r$, $n_r$ for splitting Matrix $A$, $B$ 
-    \REQUIRE $c_b$ for Matrix chunking $\tilde{B}$
+    \Require Matrix $A$,$B$,$C$ in  column-order
+    \Require Matrix Size $lda$
+    \Require $k_b$, $m_b$, $m_r$, $n_r$ for splitting Matrix $A$, $B$ 
+    \Require $c_b$ for Matrix chunking $\tilde{B}$
     \State $\tilde{A}$ = malloc($k_b \cdot m_b \cdot 8$)
-    \State $\tilde{B}[]$ = [malloc($c_b * k_b$),malloc($c_b * k_b$), ...] \COMMENT{$\tilde{B}[]$ is of length $lda/c_b$}
+    \State $\tilde{B}[]$ = [malloc($c_b * k_b$),malloc($c_b * k_b$), ...] \Comment{$\tilde{B}[]$ is of length $lda/c_b$}
     \For{$p = 0, ..., k - 1$ \textit{in steps of $k_b$}}
-        \State Pack $B(p : p + k_b - 1, 0: n - 1)$ into $\tilde{B}[]$ \COMMENT{Row-Order}
+        \State Pack $B(p : p + k_b - 1, 0: n - 1)$ into $\tilde{B}[]$ \Comment{Row-Order}
         \For{$i = 0, ..., m - 1$ \textit{in steps of $m_b$}}
-            \State Pack $A(i : i + m_b - 1, p: p + k_b - 1)$ into $\tilde{A}$ \COMMENT{Column-Order}
+            \State Pack $A(i : i + m_b - 1, p: p + k_b - 1)$ into $\tilde{A}$ \Comment{Column-Order}
             \For{$jr = 0, ..., n - 1$ \textit{in steps of $n_r$}}
                 \For{$ir = 0, ..., m_b - 1$ \textit{in steps of $m_r$}}
                     \State $\hat{A} = \tilde{A} + ir;$
                     \State $\hat{B} = \tilde{B}[jr/c_b] + jr\%c_b;$
-                    \State $\hat{C} += \hat{A}\times\hat{B};$ \COMMENT{Algorithm 2: Microkernel}
+                    \State $\hat{C} += \hat{A}\times\hat{B};$ \Comment{Algorithm 2: Microkernel}
                     \State Update $C$ using $\hat{C}$;
                 \EndFor    
             \EndFor    

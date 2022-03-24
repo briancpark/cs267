@@ -25,7 +25,7 @@ noticeably improve overall our performance.
 
 \begin{figure}[H] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
 \centering %图片居中
-\includegraphics[width=0.7\textwidth]{log_plots.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
+\includegraphics[width=0.7\textwidth]{figures/log_plots.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
 \caption{log-log scale showing plot time} %最终文档中希望显示的图片标题
 \label{log-log scale showing plot time} %用于文内引用的标签
 \end{figure}
@@ -95,7 +95,7 @@ could possibly be removed if done correctly.
 \subsection{Weak Scaling}
 \begin{figure}[H] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
 \centering %图片居中
-\includegraphics[width=0.7\textwidth]{time_vs_num_processor_weak.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
+\includegraphics[width=0.7\textwidth]{figures/time_vs_num_processor_weak.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
 \caption{Time VS number of Processors} %最终文档中希望显示的图片标题
 \label{Time VS number of Processors} %用于文内引用的标签
 \end{figure}
@@ -105,7 +105,7 @@ We are only seeing a little jump on from 1 processor to 2 processors and then we
 
 \begin{figure}[H] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
 \centering %图片居中
-\includegraphics[width=0.7\textwidth]{weka scaling efficinecy vs. num of processors.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
+\includegraphics[width=0.7\textwidth]{figures/weka scaling efficinecy vs. num of processors.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
 \caption{Weak Scaling Efficiency vs number of processors} %最终文档中希望显示的图片标题
 \label{Weak Scaling Efficiency vs number of processors} %用于文内引用的标签
 \end{figure}
@@ -117,7 +117,7 @@ We can see that our weak scaling efficiency is highest while we are using 2 proc
 We fixed our problem size to be 1 million particles and keep on increasing the number of processors from 1 all the way to 64 by 2 times every time, and the following shows the computation time changes
 \begin{figure}[H] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
 \centering %图片居中
-\includegraphics[width=0.7\textwidth]{OpenMP time vs. Num_of_processors_strong.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
+\includegraphics[width=0.7\textwidth]{figures/OpenMP time vs. Num_of_processors_strong.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
 \caption{Time VS Number of Processors} %最终文档中希望显示的图片标题
 \label{Time VS Number of Processors} %用于文内引用的标签
 \end{figure}
@@ -126,7 +126,7 @@ We can see that with the changes from 1 processor to 2 processors our total time
 
 \begin{figure}[H] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
 \centering %图片居中
-\includegraphics[width=0.7\textwidth]{strong scale efficiency vs. Num_of_processors.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
+\includegraphics[width=0.7\textwidth]{figures/strong scale efficiency vs. Num_of_processors.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
 \caption{Strong Scaling Efficiency VS Num of processors} %最终文档中希望显示的图片标题
 \label{Strong Scaling Efficiency VS Num of processors} %用于文内引用的标签
 \end{figure}
@@ -150,47 +150,9 @@ For this no communication time was recorded, as we are purely working with a sha
 
 \begin{figure}[H] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
 \centering %图片居中
-\includegraphics[width=0.7\textwidth]{time_break_down.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
+\includegraphics[width=0.7\textwidth]{figures/time_break_down.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
 \caption{Time break downs with the scale of p changes} %最终文档中希望显示的图片标题
 \label{Strong Scaling Efficiency VS Num of processors} %用于文内引用的标签
 \end{figure}
-
-
-
-
-
-
-
-% Write-up Details
-
-% Your write-up should contain:
-
-% The names of the people in your group and each member's contribution.
-
-% A plot in log-log scale that shows that your serial and parallel codes run in O(n) time and a description of the data structures that you used to achieve it.
-
-% A description of the synchronization you used in the shared memory implementation.
-
-% A description of the design choices that you tried and how did they affect the performance.
-
-% Speedup plots that show how closely your OpenMP code approaches the idealized p-times speedup and a discussion on whether it is possible to do better.
-
-% Where does the time go? Consider breaking down the runtime into computation time, synchronization time and/or communication time. How do they scale with p?
-
-% Notes:
-
-% Your grade will mostly depend on three factors:
-
-% Scaling sustained by your codes on the Cori supercomputer (varying n).
-
-% Performance sustained by your codes on the Cori supercomputer.
-
-% Explanations of your methodologies and the performance features you observed (including what didn't work).
-
-% You must use the GNU C Compiler for this assignment. If your code does not compile and run with GCC, it will not be graded.
-
-% If your code produces incorrect results, it will not be graded.
-
-% You must target Cori's KNL processors for this assignment, not Haswell, like HW1.
 
 \end{document}

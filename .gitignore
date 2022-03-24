@@ -4,6 +4,7 @@
 # LaTeX files
 *.aux
 *.log
+_*/
 hw*.pdf
 proposal.pdf
 *.synctex.gz

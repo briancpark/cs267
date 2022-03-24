@@ -37,7 +37,7 @@ change in size each simulation as they move around, which is why we use \verb|st
 \subsection{log-log plots}
 \begin{figure}[H] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
 \centering %图片居中
-\includegraphics[width=0.7\textwidth]{loglog.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
+\includegraphics[width=0.7\textwidth]{figures/loglog.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
 \caption{log} %最终文档中希望显示的图片标题
 \label{log} %用于文内引用的标签
 \end{figure}
@@ -56,7 +56,7 @@ Some design choices we made were mainly simple, to ease debugging and developmen
 \subsection{Weak Scaling}
 \begin{figure}[H] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
 \centering %图片居中
-\includegraphics[width=0.7\textwidth]{2Nodes time vs. num of tasks.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
+\includegraphics[width=0.7\textwidth]{figures/2Nodes time vs. num of tasks.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
 \caption{2Nodes time vs. num of tasks} %最终文档中希望显示的图片标题
 \label{2Nodes time vs. num of tasks} %用于文内引用的标签
 \end{figure}
@@ -66,7 +66,7 @@ We are only seeing a little jump on from 1 task to 2 tasks and then we are remai
 
 \begin{figure}[H] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
 \centering %图片居中
-\includegraphics[width=0.7\textwidth]{2Nodes weak scaling efficinecy vs. num of tasks.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
+\includegraphics[width=0.7\textwidth]{figures/2Nodes weak scaling efficinecy vs. num of tasks.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
 \caption{2Nodes weak scaling efficiency vs. num of tasks} %最终文档中希望显示的图片标题
 \label{2Nodes weak scaling efficinecy vs. num of tasks} %用于文内引用的标签
 \end{figure}
@@ -79,7 +79,7 @@ We tested both for one node and two nodes. And finally, we test up to 2 nodes an
 One Node:
 \begin{figure}[H] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
 \centering %图片居中
-\includegraphics[width=0.7\textwidth]{1Node MPI time vs. Num_of_tasks.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
+\includegraphics[width=0.7\textwidth]{figures/1Node MPI time vs. Num_of_tasks.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
 \caption{1Node MPI time vs. Num of tasks} %最终文档中希望显示的图片标题
 \label{1Node MPI time vs. Num_of_tasks} %用于文内引用的标签
 \end{figure}
@@ -87,7 +87,7 @@ We are only seeing a little jump on from 16 task to 32 processors and then we ar
 
 \begin{figure}[H] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
 \centering %图片居中
-\includegraphics[width=0.7\textwidth]{1 Node strong scale efficiency vs. Num_of_tasks.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
+\includegraphics[width=0.7\textwidth]{figures/1 Node strong scale efficiency vs. Num_of_tasks.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
 \caption{1 Node strong scale efficiency vs. Num of tasks} %最终文档中希望显示的图片标题
 \label{1 Node strong scale efficiency vs. Num_of_tasks} %用于文内引用的标签
 \end{figure}
@@ -97,7 +97,7 @@ We can see that our weak scaling efficiency is highest while we are using 32 tas
 Two Nodes:
 \begin{figure}[H] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
 \centering %图片居中
-\includegraphics[width=0.7\textwidth]{2Nodes MPI time vs. Num_of_tasks.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
+\includegraphics[width=0.7\textwidth]{figures/2Nodes MPI time vs. Num_of_tasks.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
 \caption{2 Node MPI time vs. Num of tasks} %最终文档中希望显示的图片标题
 \label{2 Nodes MPI time vs. Num_of_tasks} %用于文内引用的标签
 \end{figure}
@@ -107,7 +107,7 @@ Again, We are only seeing a little jump on from 16 task to 32 processors and the
 
 \begin{figure}[H] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
 \centering %图片居中
-\includegraphics[width=0.7\textwidth]{2Node strong scale efficiency vs. Num_of_tasks.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
+\includegraphics[width=0.7\textwidth]{figures/2Node strong scale efficiency vs. Num_of_tasks.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
 \caption{2Node strong scale efficiency vs. Num of tasks} %最终文档中希望显示的图片标题
 \label{2Node strong scale efficiency vs. Num_of_tasks} %用于文内引用的标签
 \end{figure}
@@ -116,33 +116,9 @@ We can see that our weak scaling efficiency is highest while we are using 32 tas
 
 
 \section{Performance Breakdown}
-For this we have communication time, computation time and synchronization time. Our total time is 24.4984s for 1.5 million particles, and we spend most of our communication time on mpi finalize, however, message sending and receiving didn't take a lot. Both of them take nearly 2-3\% of the time. Interestingly, gather and all gather took 20-30\% of the time, indicating that communication of all processes definitely takes a significant hit on performance. And they scale almost linearly proportional with p. Since we are using non-blocking communication, we measure the time used on MPI_Wait.
+For this we have communication time, computation time and synchronization time. Our total time is 24.4984s for 1.5 million particles, and we spend most of our communication time on mpi finalize, however, message sending and receiving didn't take a lot. Both of them take nearly 2-3\% of the time. Interestingly, gather and all gather took 20-30\% of the time, indicating that communication of all processes definitely takes a significant hit on performance. And they scale almost linearly proportional with p. Since we are using non-blocking communication, we measure the time used on MPI\_Wait.
 
 For computation, we left the code without any explicit barriers, and for synchronization, we left barriers on. We see that they have nearly the same times. We used print statements as we didn't really know how to utilize the profiling tools, the learning curve for using it was very steep.
 
 
-% Your write-up should contain:
-
-
-% A plot in log-log scale that shows that your parallel codes performance and a description of the data structures that you used to achieve it.
-
-
-
-
-
-% Speedup plots that show how closely your MPI code approaches the idealized p-times speedup and a discussion on whether it is possible to do better. Both strong and weak scaling. Test up to 2 nodes and 1,500,000 particles.
-
-% Where does the time go? Consider breaking down the runtime into computation time, synchronization time and/or communication time. How do they scale with p?
-
-% Notes:
-
-% Your grade will mostly depend on three factors:
-
-% Scaling sustained by your codes on the Cori supercomputer (varying n).
-
-% Performance sustained by your codes on the Cori supercomputer.
-
-% Explanations of your methodologies and the performance features you observed (including what didn't work).
-
 \end{document}
-For this we have communication time, computation time and synchronization time. Our total time is 24.4984s for 1.5 million particles, and we spend most of our communication time on mpi finalize, however, message sending and receiving didn't take a lot.
