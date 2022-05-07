@@ -16,7 +16,7 @@
 NumS is a library that translates Python and NumPy to optimized distributed systems code. Originally, it was built on top of Ray and was intended for cloud computing environment. We explore how to implement a GPU backend that can be deployable on HPC systems with multi GPU configurations, such as NVIDIA V100 cluster connected with NVLink. We implement a GPU backend that uses CuPy to execute kernels on NVIDIA GPUs and evaluate the performance on multi GPU setup with Ray and NCCL.
 
 \section{Introduction}
-Nowadays, there are many parallel primitives that can be used to accelerate numerical workloads. The most popular ones by far for the CPU have been OpenMP, MPI, and UPC++. But often, CPUs do not meet the demand of compute power coming from deep learning models, often requiring petabytes/s of throughput \cite{openai}. Figure \ref{fig:openai} shows that the increase in compute power over the past decade. This is where domain specific hardware is needed, such as GPUs and TPUs to bridge the gap between compute power today's hardware provides and the growing demand from deep learning. But even then, GPUs and TPUs are often limited by high bandwidth memory to store parameters for machine learning. Due to the death of Moore's Law and end of Denard's scaling, distributed systems is often the solution to scale indefinitely. Here, we will analyze and evaluate the performance and design of NumS with single GPU and multi GPU inter-node backends to reach teraflops/s of performance. We will also evaluate the performance gains on machine learning modelling and compare it's performance against CPU backends of NumS
+Nowadays, there are many parallel primitives that can be used to accelerate numerical workloads. The most popular ones by far for the CPU have been OpenMP, MPI, and UPC++. But often, CPUs do not meet the demand of compute power coming from deep learning models, often requiring petabytes/s of throughput \cite{openai}. Figure \ref{fig:openai} shows that the increase in compute power over the past decade. This is where domain specific hardware is needed, such as GPUs and TPUs to bridge the gap between compute power today's hardware provides and the growing demand from deep learning. But even then, GPUs and TPUs are often limited by high bandwidth memory to store parameters for machine learning. Due to the death of Moore's Law and end of Denard's scaling, distributed systems is often the solution to scale indefinitely. Here, we will analyze and evaluate the performance and design of NumS with single GPU and multi GPU inter-node backends to reach teraflops/s of performance.
 
 \begin{figure}
   \centerline{\includegraphics[width=3in]{figures/ai-and-compute-modern-log.png}}
@@ -27,7 +27,7 @@ Nowadays, there are many parallel primitives that can be used to accelerate nume
 \section{Design}
 NumS by design already tries to optimize for distributed systems by providing optimal schedulers and communication avoiding algorithms. \cite{nums} We find that these same algorithms can be easily transferable when implementing a multi GPU backend.
 
-The core backend of NumS uses NumPy for numerical computations and it has a kernel interface where computations are executed by partitions in a map-reduce style of programming. NumS has kernels written in NumPy that execute on each data partition in a SPMD style interface. For communication, an application level interface is used to coordinate data movement between devices. Because it was originally written in Ray, the communication APIs are abstracted away from the developer using Ray's object store. The object store is an in-memory distributed object store, using futures and promises to enable task parallelism \cite{ray}. It abstracts away the communication to the developer, making writing distributed programming simple. NumS is able to be aware of array partitioning, placement, and scheduling by utilizing advanced Ray API functionality. In addition to Ray, it also supports a backend for Dask and MPI, so that it could be more easily run on HPC systems. Highlighted in green in Figure \ref{fig:system_arch} is the backends and interfaces implemented in this report.
+The core backend of NumS uses NumPy for numerical computations and it has a kernel interface where computations are executed by partitions in a map-reduce style of programming. NumS has kernels written in NumPy that execute on each data partition in a SPMD style interface. For communication, an application level interface is used to coordinate data movement and scheduling between devices. Because it was originally written in Ray, the communication APIs are abstracted away from the developer using Ray's object store. The object store is an in-memory distributed object store, using futures and promises to enable task parallelism \cite{ray}. It abstracts away the communication to the developer, making writing distributed programming simple. NumS is able to be aware of array partitioning, placement, and scheduling by utilizing advanced Ray API functionality. NumS uses a data structure called BlockArray to partition the array evenly into blocks that are mapped to each CPU. In addition to Ray, it also supports a backend for Dask and MPI, so that it could be more easily run on HPC systems. Highlighted in green in Figure \ref{fig:system_arch} is the backends and interfaces implemented in this report.
 
 \begin{figure}
   \centerline{\includegraphics[width=3in]{figures/system_architecture.png}}
@@ -35,7 +35,7 @@ The core backend of NumS uses NumPy for numerical computations and it has a kern
   \label{fig:system_arch}
 \end{figure}
 
-CuPy is a NumPy/SciPy-compatible array library for GPU-accelerated computing with Python. It can be often used as drop-in replacement for NumPy, and we use it to enable GPU support on NumS. \cite{cupy} Just like how NumPy can use optimized vendor libraries for BLAS like Intel MKL, CuPy uses NVIDIA's cuBLAS on NVIDIA GPUs while also being aware of NVIDIA hardware features such as NVIDIA Tensor Cores. Thus, CuPy serves as a viable option for NumS compared to other Python array libraries like Dask, Jax, or Numba. This also means that the scope of GPU support on NumS is only limited to NVIDIA GPUs with CUDA support.
+CuPy is a NumPy/SciPy-compatible array library for GPU-accelerated computing with Python. It can be often used as drop-in replacement for NumPy, and we use it to enable GPU support on NumS. \cite{cupy} Just like how NumPy can use optimized vendor libraries for BLAS like Intel MKL, CuPy uses NVIDIA's cuBLAS on NVIDIA GPUs while also being aware of NVIDIA hardware features such as NVIDIA Tensor Cores. Thus, CuPy serves as a viable option for NumS compared to other array libraries like Dask, Jax, or Numba. This also means that the scope of GPU support on NumS is only limited to NVIDIA GPUs with CUDA support. For BlockArray partitioning, we will map a block to a GPU, as there is no control in CuPy to control thread blocks and kernel grids. 
 
 Another reason why CuPy serves as a viable option is because it also provides low level CUDA API support such as Python wrappers over the NCCL library. This allows us to write distributed code for NVIDIA GPUs using NCCL as opposed to other options such as CUDA-aware MPI. Another benefit of using NCCL is that it can be used in a single process, where it wont be a problem with Python's global interpreter lock.
 
@@ -50,10 +50,9 @@ For implementing the multi-GPU support, we find that Ray's features to abstract 
 \subsection{NCCL}
 With NCCL communication, there are some disadvantages over Ray that NCCL does not supply, such as not being fault tolerant and being susceptible to a deadlock. If a device goes offline in the middle of communication call, this is where NCCL fails to continue, while a Ray implementation can continue on. But since the focus of this implementation was to make NumS deployable under a HPC environment, NCCL served as a better choice in this use case, as these problems are more susceptible in cloud computing. 
 
-When using NCCL, we also had to use multiple CUDA streams to enable concurrency. Naively running code on multiple GPUs will all sync up to the null thread and serialize the timeline and not enable concurrency. For communication under NCCL, we used simple send and receive calls. For future work, we could try to improve the collective communication calls for certain algorithms to utilize other collective calls such as \verb|BCast| and \verb|AllReduce|.
+When using NCCL, we also had to use multiple CUDA streams to enable concurrency. Naively running code on multiple GPUs will all sync up to the null thread and serialize the timeline and not enable concurrency. For communication under NCCL, we used simple \verb|send|/\verb|recv| calls.
 
-For scalability, we find that we cannot scale easily to more than 4 GPUs. It's susceptible that it may be due to higher latency and 
-Figure \ref{fig:nvlink} shows the NVLink mappings and we see longer traversal of communication if a GPU on the left side wants to communicate with the right side. 
+For scalability, we find that we cannot scale easily to more than 4 GPUs. Invalid memory accesses would happen and it could be due to data not being available yet due to a higher latency between send and receive calls. Figure \ref{fig:nvlink} shows the NVLink mappings and we see longer traversal of communication if a GPU on the left side wants to communicate with a GPU on the right side. 
 
 \begin{figure}
   \centerline{\includegraphics[width=5in]{figures/nvlink.png}}
@@ -62,24 +61,25 @@ Figure \ref{fig:nvlink} shows the NVLink mappings and we see longer traversal of
 \end{figure}
 
 \section{Evaluation}
-This is one of the first applications where NumS has successfully run on a HPC machine environment. Ray was not intended to run on HPC systems, as mentioned in a guest lecture by Ion Stoica. \cite{ray-lecture}
+This is one of the first applications where NumS has successfully run on a HPC machine environment. Ray was not intended to run on HPC systems, as mentioned in a guest lecture by Ion Stoica. \cite{ray-lecture} 
 
 \subsection{Profiling}
-When naively using just the null CUDA stream, we see that concurrency won't be enabled as shown in figure 3
+When naively using just the null CUDA stream, we see that concurrency won't be enabled as shown in Figure \ref{fig:stream} 
 
 \begin{figure}
   \centerline{\includegraphics[width=6in]{figures/stream.png}}
   \caption{Streams not being scheduled concurrently}
+  \label{fig:stream}
 \end{figure}
 
 \subsection{Benchmarks}
 Benchmarking was done on Pittsburgh Supercomputing Center's Bridges-2. They have a \verb|GPU-shared| node that uses up to 8 NVIDIA Tesla V100-32GB SXM2 GPUs and two Intel Xeon Gold 6248 “Cascade Lake” CPUs (20 cores, 2.50–3.90GHz, 27.5MB LLC, 6 memory channels) \cite{psc}. The GPUs are linked with NVLink, which provide 25 Gb/s of bandwidth.
 
 
-For each benchmark we seeded the random value at every iteration and generated 2 random $n \times n$ matrices to compute $C =  A \times B$. 15 trials per each size is done and the first 5 results are thrown away. This is due to CuPy initializing a CUDA context upon every first CUDA API call. Then the mean of the 10 results are taken and logged.
+For each matrix multiply benchmark we seeded the random value at every iteration and generated 2 random $n \times n$ matrices to compute $C =  A \times B$. For elementwise, we did the same random seeding, but generated a size $n$ vector and did elementwise multiply. 15 trials per each size is done and the first 5 results are thrown away. This is due to CuPy initializing a CUDA context upon every first CUDA API call. Then the mean of the 10 results are taken and logged.
 
-\subsection{DGEMM}
-For a single GPU, William analyzes the Roofline model of V100 architecture theoretically and empirically. The theoretical peak observed for double precision floating point operations in NVIDIA V100 is 7833.6 GFLOP/s while the empirical peak is 7068.9 GFLOP/s \cite{roofline}. We observe by using CuPy's cuBLAS, it will reach near theoretical peak (94.16\%) and almost perfect empirical peak (103.91\%). We suspect that the performance overachieving empirical peak may be due to inaccuracy of timing between Python and CUDA interface that CuPy provides, or the fact that William used \verb|nvprof| and there is profiling overhead collected in the empirical peak. Figure \ref{fig:dgemm} shows the performance of NumS on multiple GPUs. NumS peak performance of each GPU setting maintains 89.2-99.86\% of the empirical peak and 80.84-90.50\% of the theoretical peak. The efficiency decreases as we increase to more GPUs, and this is likely due to communication overhead.
+\subsubsection{DGEMM}
+For a single GPU, William analyzes the Roofline model of V100 architecture theoretically and empirically. The theoretical peak observed for double precision floating point operations in NVIDIA V100 is 7833.6 GFLOP/s while the empirical peak is 7068.9 GFLOP/s \cite{roofline}. We observe by using CuPy's cuBLAS, it will reach near theoretical peak (94.16\%) and overachieves the empirical peak (103.91\%). We suspect that the outperformance of the empirical peak may be due to inaccuracy of timing between Python and CUDA interface that CuPy provides, or the fact that William used \verb|nvprof| and there is profiling overhead collected in the empirical peak. Figure \ref{fig:dgemm} shows the performance of NumS on multiple GPUs. NumS peak performance of each GPU setting maintains 89.2-99.86\% of the empirical peak and 80.84-90.50\% of the theoretical peak. The efficiency decreases as we increase to more GPUs, and this is likely due to communication overhead.
 
 %TODO weak scaling plots
 \begin{figure}
@@ -88,7 +88,7 @@ For a single GPU, William analyzes the Roofline model of V100 architecture theor
   \label{fig:dgemm}
 \end{figure}
 
-\subsection{SGEMM}
+\subsubsection{SGEMM}
 The theoretical peak of NVIDIA V100 for single precision floating point numbers become nearly twice, 15.7 TFLOP/s. The same sizes are tested as NumS by default generates random double precision floating point numbers. We only transform matrices $A, B$ to single precision after they have been generated. Figure \ref{fig:sgemm} shows SGEMM performance on NumS up to 4 GPUs. NumS peak performance maintains 80.84-90.18\% of the theoretical peak in single precision performance. This is very similar performance from the DGEMM, and we see that the difference in precision scales well.
 
 \begin{figure}
@@ -97,14 +97,10 @@ The theoretical peak of NVIDIA V100 for single precision floating point numbers 
   \label{fig:sgemm}
 \end{figure}
 
-\subsection{Half Precision FP16 GEMM}
-Half precision computations are useful where high precision doesn't matter and speed is important. NVIDIA V100 architecture is able to provide Tensor Cores 
+\subsubsection{Half Precision FP16 GEMM}
+Half precision computations are useful where high precision doesn't matter and speed is important. CPU architectures and software are not well supported for these types of computations. For example, NumPy cannot compute FP16 as many Intel architectures do not support \verb|fmadd| for FP16 vectors. NVIDIA V100 architecture is able to provide Tensor Cores, which use specialized hardware accelerators and are able to hit a theoretical peak of 125 TFLOP/s.
 
-Figure \ref{fig:fp16gemm} shows the performance
-
-NumS peak performance maintains between 54.78-77.44\% of the theoretical peak for Tensor Cores. Unfortunately, when scaling to more than 1 GPU, the efficiency goes down. There is still more work to be done here to understand why scaling is not as efficient.
-
-CPU architectures and software are not well supported for these types of computations. For example, NumPy cannot compute FP16 as many Intel architectures do not support \verb|fmadd| for 16 bit vectors. 
+Figure \ref{fig:fp16gemm} shows the performance of half precision GEMM on NumS up to 4 GPUs. NumS peak performance maintains between 54.78-77.44\% of the theoretical peak for Tensor Cores. Unfortunately, when scaling to more than 1 GPU, the percentage of theoretical peak goes down. And from the start, the theoretical peak for Tensor Core could not be reached with high efficiency. There is still more work to be done here to understand why scaling is not as efficient and the base performance is not ideal to begin with.
 
 
 \begin{figure}
@@ -113,34 +109,65 @@ CPU architectures and software are not well supported for these types of computa
   \label{fig:fp16gemm}
 \end{figure}
 
-
-\subsection{Elementwise Operations}
-here we show that the 
-Note that elementwise operations are handled by just CuPy and its internal CUDA API calls-- cuBLAS is not being used. Although the elementwise does not quite reach the theoretical peak, compared to just the normal CuPy implementation, it scales fairly well. 
+\subsubsection{Elementwise Operations}
+For elementwise operations, these are all handled by CuPy, as they are not a cuBLAS call. Benchmarked are elementwise multiply of a $n$ size 1 dimensional array. Although the elementwise does not quite reach the theoretical peak, compared to just the normal CuPy implementation, it scales fairly well. It takes a while to hit the roofline as we scale to more GPUs.
  
+\begin{figure}
+  \centerline{\includegraphics[width=5in]{figures/NumS_GPU_FLOPS_elementwise.png}}
+  \caption{GigaFLOPs Elementwise Benchmark}
+  \label{fig:fp16gemm}
+\end{figure}
+
 %TODO weak scaling plots
 
-\subsection{Logistic Regression}
+\subsubsection{Logistic Regression}
 
-\subsection{Multi Layer Perceptron}
+\subsubsection{Multi Layer Perceptron}
 
+\subsection{Energy and Cost Analysis}
+Although the results and benchmarks sound promising, it's also important to consider if the compute costs are worth it.
+An interesting way to look at the performance of GPUs is to compare it against cloud computing service rates such as AWS. \cite{aws} Here, we'll analyze the FLOPs per price ratio for double precision computations.
+
+AWS's P3 instances use NVIDIA V100 GPUs that has rates scaling linearly with the number of GPUs. \verb|p3.2xlarge| takes \$3.06 per hour with on demand pricing which equates to \$6.54 per PFLOP or 152.90 TFLOP/dollar.
+
+$$\frac{\$3.06}{\textrm{hour}}\frac{1 \textrm{ hour}}{60 \textrm{s}}\frac{1 \textrm{s}}{0.0078\textrm{ PFLOP}} = \$6.54/\textrm{PFLOP}$$
+
+
+Compared to a high performance CPU instance such as AWS's \verb|r5.16xlarge|, it costs \$4.032 for on demand pricing which equates to \$262.25 per hour or 3.964 TFLOP/dollar. The theoretical peak of \verb|r5.16xlarge|, which uses Intel(R) Xeon(R) Platinum 8259CL CPU, is 2560 GFLOPs.
+
+$$\frac{\$4.032}{\textrm{hour}}\frac{1 \textrm{ hour}}{60 \textrm{s}}\frac{1 \textrm{s}}{0.000256\textrm{ PFLOP}} = \$262.25/\textrm{PFLOP}$$
+
+Theoretically, we see that there is a 38.57x difference in the price the user pays per PFLOP with On Demand Pricing on AWS. So for a high compute service in the cloud, a GPU can be much more cost saving if a program can utilize all of the resources provided by the GPU.
+
+In HPC systems, we also care about the amount of power being consumed. Here, we'll compare two HPC compute nodes, Intel KNL on Cori Supercomputer and NVIDIA V100 on Bridges-2.
+
+On NVIDIA V100, the TDP is 300 W. Since a watt can be also defined in Joules/second, it takes 38.46 Joules per TFLOP. \cite{v100}
+
+$$\frac{300\textrm{ Joules}}{\textrm{s}}\frac{\textrm{s}}{7.8 \textrm{ TFLOP}} = 38.46 \textrm{ Joules/TFLOP}$$
+
+
+On Intel KNL processor, the theoretical peak using all 68 cores is 3 TFLOPs. This equates to the processor using 71.67 Joules per TFLOP. \cite{knl}
+
+$$\frac{215\textrm{ Joules}}{\textrm{s}}\frac{\textrm{s}}{3 \textrm{ TFLOP}} = 71.67 \textrm{ Joules/TFLOP}$$
+
+Thus, in theory it is 1.86x more energy saving to choose a GPU over a CPU in high compute tasks. We see that NumS with GPU support becomes a viable cost and energy saving option in dense linear algebra computations given the high percentage of theoretical peak obtained with DGEMM routines.
 
 \section{Related Work}
-For executing linear algebra in a multi-GPU systems, we see that it is still novel and in it's early stages. For example, NVIDIA's cuBLAS Multi-GPU Extension is still in it's Early Access phase to limited group of developers. \cite{cublasmg} Dask also provides multi GPU support.
+For executing linear algebra in a multi-GPU systems, we see that it is still novel and in it's early stages. For example, NVIDIA's cuBLAS Multi-GPU Extension is still in it's Early Access phase to limited group of developers. \cite{cublasmg} Dask also provides multi GPU support for array programming, but it's still in an experimental stage. \cite{dask-cuda}
 
-https://docs.rapids.ai/api/dask-cuda/nightly/index.html
+\section{Conclusion}
+Currently, distributed GPU computations are still a work in progress in the current state. Although we are able to achieve good scaling with non-communication algorithms, we find the performance on communication algorithms a challenge, such as matrix multiply. The limitation of scalability is not as easy to pinpoint as it could come from NVIDIA's NCCL library performance or the design of NumS.
 
-\section{Conclusions}
-Although we are able to achieve good scaling with non communication algorithms, we find the performance on communication algorithms a challenge, such as matrix multiply. The limitation is not as easy to pinpoint as it could come from NVIDIA's NCCL library performance or the design of NumS. 
+For Ray, debugging performance, especially on a HPC environment can be hard to pinpoint. Python processes become wrapped under Ray processes and it becomes hard to profile CUDA API calls through profilers like NVIDIA NSight Systems. Thus, it was much easier to figure out performance bugs with NCCL as it profiles everything including memory transfers, NCCL, cuBLAS, and CUDA API calls. Ray also has it's own profilers, but it is not as verbose as NSight.
 
-Adding GPU support also allows users to run hardware agnostic code when using NumS. For example, a user can train on cheap distributed instances using CPU and Ray backend, and for inference, where performance is often crucial, they can switch to a GPU backend. 
+A limitation of GPUs is memory. GPU has its own memory which is not user upgradable, meaning that there is a limitation. As such, if memory is a constraint to the user, then using CPU may be preferable. 
+
+Adding GPU support also allows users to run hardware agnostic code when using NumS. For example, a user can train on cheap distributed instances using CPU and Ray backend, and for inference, where performance is often crucial, they can switch to a GPU backend. As mentioned by Borrill, computational scientists are limited by what their HPC vendor can supply, and a change in HPC Architecture such as many core CPU to GPU means that users will have to translate their code to other parallel primitives. \cite{borrill} In this example, it could probably be converting from Intel Intrinsics, OpenMP, and MPI to CUDA. With NumS, users can just change the backend with a single line of code and easily run from a CPU to GPU environment.
 
 \section{Future Work}
 We wish to explore how to extend scalability to even more GPUs and to inter-node systems. The main challenge in properly designing such a system is efficiently scheduling within intra-node and between inter-node. We also only focused on HPC systems with the use of Bridges-2. But other work could be done to also try to deploy this on AWS cloud services, as they also provide V100 instances with P3 instances. 
 
-
-the main challenge in impelmenting this backend so far has been trying to optimize communication bandwidths using nvlink connenctions and non blocking communicaiton. 
-https://docs.rapids.ai/api/dask-cuda/nightly/index.html
+For future work, we could try to improve the collective communication calls for certain algorithms to utilize other collective calls such as \verb|BCast| and \verb|AllReduce|. Another area to look into is optimizing the NumS API to also support mixed precision computations, as GPUs are becoming increasingly popular and outperforming in those use cases. 
 
 \bibliographystyle{ieeetr}
 \bibliography{references} 
