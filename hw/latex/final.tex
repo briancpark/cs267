@@ -65,7 +65,7 @@ For scalability, we find that we cannot scale easily to more than 4 GPUs. Invali
 \end{figure}
 
 \section{Evaluation}
-This is one of the first applications where NumS has successfully run on a HPC machine environment. Ray was not intended to run on HPC systems, as mentioned in a guest lecture by Stoica. \cite{ray-lecture} 
+This is one of the first applications where NumS has successfully run on a HPC machine environment. Ray was not intended to run on HPC systems, as mentioned in a guest lecture by Stoica. \cite{ray-lecture} We evaluate microbenchmarks of GEMM routines of varying precision and some machine learning models.
 
 \subsection{Profiling}
 We see that for elementwise operations that don't require communication, there is latency involved when trying to execute CUDA kernel calls. This may be a limitation due to Python and the latency show in Figure \ref{fig:stream} is around 3 milliseconds. 
