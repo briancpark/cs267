@@ -1,267 +1,229 @@
 @inproceedings{10.1145/3447818.3461472,
-author = {Selvitopi, Oguz and Brock, Benjamin and Nisa, Israt and Tripathy, Alok and Yelick, Katherine and Bulu\c{c}, Ayd\i{}n},
-title = {Distributed-Memory Parallel Algorithms for Sparse Times Tall-Skinny-Dense Matrix Multiplication},
-year = {2021},
-isbn = {9781450383356},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-url = {https://doi.org/10.1145/3447818.3461472},
-doi = {10.1145/3447818.3461472},
-abstract = {Sparse times dense matrix multiplication (SpMM) finds its applications in well-established fields such as computational linear algebra as well as emerging fields such as graph neural networks. In this study, we evaluate the performance of various techniques for performing SpMM as a distributed computation across many nodes by focusing on GPU accelerators. We examine how the actual local computational performance of state-of-the-art SpMM implementations affect computational efficiency as dimensions change when we scale to large numbers of nodes, which proves to be an unexpectedly important bottleneck. We also consider various distribution strategies, including A-Stationary, B-Stationary, and C-Stationary algorithms, 1.5D and 2D algorithms, and RDMA-based and bulk synchronous methods of data transfer. Our results show that the best choice of algorithm and implementation technique depends not only on the cost of communication for particular matrix sizes and dimensions, but also on the performance of local SpMM operations. Our evaluations reveal that with the involvement of GPU accelerators, the best design choices for SpMM differ from the conventional algorithms that are known to perform well for dense matrix-matrix or sparse matrix-sparse matrix multiplies.},
-booktitle = {Proceedings of the ACM International Conference on Supercomputing},
-pages = {431–442},
-numpages = {12},
-keywords = {parallel algorithms, RDMA, graphics accelerators, sparse matrices, sparse linear algebra},
-location = {Virtual Event, USA},
-series = {ICS '21}
+	title        = {Distributed-Memory Parallel Algorithms for Sparse Times Tall-Skinny-Dense Matrix Multiplication},
+	author       = {Selvitopi, Oguz and Brock, Benjamin and Nisa, Israt and Tripathy, Alok and Yelick, Katherine and Bulu\c{c}, Ayd\i{}n},
+	year         = 2021,
+	booktitle    = {Proceedings of the ACM International Conference on Supercomputing},
+	location     = {Virtual Event, USA},
+	publisher    = {Association for Computing Machinery},
+	address      = {New York, NY, USA},
+	series       = {ICS '21},
+	pages        = {431–442},
+	doi          = {10.1145/3447818.3461472},
+	isbn         = 9781450383356,
+	url          = {https://doi.org/10.1145/3447818.3461472},
+	abstract     = {Sparse times dense matrix multiplication (SpMM) finds its applications in well-established fields such as computational linear algebra as well as emerging fields such as graph neural networks. In this study, we evaluate the performance of various techniques for performing SpMM as a distributed computation across many nodes by focusing on GPU accelerators. We examine how the actual local computational performance of state-of-the-art SpMM implementations affect computational efficiency as dimensions change when we scale to large numbers of nodes, which proves to be an unexpectedly important bottleneck. We also consider various distribution strategies, including A-Stationary, B-Stationary, and C-Stationary algorithms, 1.5D and 2D algorithms, and RDMA-based and bulk synchronous methods of data transfer. Our results show that the best choice of algorithm and implementation technique depends not only on the cost of communication for particular matrix sizes and dimensions, but also on the performance of local SpMM operations. Our evaluations reveal that with the involvement of GPU accelerators, the best design choices for SpMM differ from the conventional algorithms that are known to perform well for dense matrix-matrix or sparse matrix-sparse matrix multiplies.},
+	numpages     = 12,
+	keywords     = {parallel algorithms, RDMA, graphics accelerators, sparse matrices, sparse linear algebra}
 }
-
 @inproceedings{10.1145/3149704.3149767,
-author = {Flegar, Goran and Anzt, Hartwig},
-title = {Overcoming Load Imbalance for Irregular Sparse Matrices},
-year = {2017},
-isbn = {9781450351362},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-url = {https://doi.org/10.1145/3149704.3149767},
-doi = {10.1145/3149704.3149767},
-abstract = {In this paper we propose a load-balanced GPU kernel for computing the sparse matrix vector (SpMV) product. Making heavy use of the latest GPU programming features, we also enable satisfying performance for irregular and unbalanced matrices. In a performance comparison using 400 test matrices we reveal the new kernel being superior to the most popular SpMV implementations.},
-booktitle = {Proceedings of the Seventh Workshop on Irregular Applications: Architectures and Algorithms},
-articleno = {2},
-numpages = {8},
-keywords = {Load Balancing, Irregular access pattern, GPU, Sparse Matrix Vector Product},
-location = {Denver, CO, USA},
-series = {IA3'17}
+	title        = {Overcoming Load Imbalance for Irregular Sparse Matrices},
+	author       = {Flegar, Goran and Anzt, Hartwig},
+	year         = 2017,
+	booktitle    = {Proceedings of the Seventh Workshop on Irregular Applications: Architectures and Algorithms},
+	location     = {Denver, CO, USA},
+	publisher    = {Association for Computing Machinery},
+	address      = {New York, NY, USA},
+	series       = {IA3'17},
+	doi          = {10.1145/3149704.3149767},
+	isbn         = 9781450351362,
+	url          = {https://doi.org/10.1145/3149704.3149767},
+	abstract     = {In this paper we propose a load-balanced GPU kernel for computing the sparse matrix vector (SpMV) product. Making heavy use of the latest GPU programming features, we also enable satisfying performance for irregular and unbalanced matrices. In a performance comparison using 400 test matrices we reveal the new kernel being superior to the most popular SpMV implementations.},
+	articleno    = 2,
+	numpages     = 8,
+	keywords     = {Load Balancing, Irregular access pattern, GPU, Sparse Matrix Vector Product}
 }
 @article{10.1007/s10586-018-2810-y,
-author = {Lim, Roktaek and Lee, Yeongha and Kim, Raehyun and Choi, Jaeyoung},
-title = {An Implementation of Matrix---Matrix Multiplication on the Intel KNL Processor with AVX-512},
-year = {2018},
-issue_date = {December  2018},
-publisher = {Kluwer Academic Publishers},
-address = {USA},
-volume = {21},
-number = {4},
-issn = {1386-7857},
-url = {https://doi.org/10.1007/s10586-018-2810-y},
-doi = {10.1007/s10586-018-2810-y},
-abstract = {The second generation Intel Xeon Phi processor codenamed Knights Landing (KNL) have recently emerged with 2D tile mesh architecture and the Intel AVX-512 instructions. However, it is very difficult for general users to get the maximum performance from the new architecture since they are not familiar with optimal cache reuse, efficient vectorization, and assembly language. In this paper, we illustrate several developing strategies to achieve good performance with C programming language by carrying out general matrix---matrix multiplications and without the use of assembly language. Our implementation of matrix---matrix multiplication is based on blocked matrix multiplication as an optimization technique that improves data reuse. We use data prefetching, loop unrolling, and the Intel AVX-512 to optimize the blocked matrix multiplications. When we use a single core of the KNL, our implementation achieves up to 98% of SGEMM and 99% of DGEMM using the Intel MKL, which is the current state-of-the-art library. Our implementation of the parallel DGEMM using all 68 cores of the KNL achieves up to 90% of DGEMM using the Intel MKL.},
-journal = {Cluster Computing},
-month = {dec},
-pages = {1785–1795},
-numpages = {11},
-keywords = {Knights Landing, AVX-512, Vectorization, Threading, Matrix---matrix multiplication}
+	title        = {An Implementation of Matrix---Matrix Multiplication on the Intel KNL Processor with AVX-512},
+	author       = {Lim, Roktaek and Lee, Yeongha and Kim, Raehyun and Choi, Jaeyoung},
+	year         = 2018,
+	month        = {dec},
+	journal      = {Cluster Computing},
+	publisher    = {Kluwer Academic Publishers},
+	address      = {USA},
+	volume       = 21,
+	number       = 4,
+	pages        = {1785–1795},
+	doi          = {10.1007/s10586-018-2810-y},
+	issn         = {1386-7857},
+	url          = {https://doi.org/10.1007/s10586-018-2810-y},
+	issue_date   = {December  2018},
+	abstract     = {The second generation Intel Xeon Phi processor codenamed Knights Landing (KNL) have recently emerged with 2D tile mesh architecture and the Intel AVX-512 instructions. However, it is very difficult for general users to get the maximum performance from the new architecture since they are not familiar with optimal cache reuse, efficient vectorization, and assembly language. In this paper, we illustrate several developing strategies to achieve good performance with C programming language by carrying out general matrix---matrix multiplications and without the use of assembly language. Our implementation of matrix---matrix multiplication is based on blocked matrix multiplication as an optimization technique that improves data reuse. We use data prefetching, loop unrolling, and the Intel AVX-512 to optimize the blocked matrix multiplications. When we use a single core of the KNL, our implementation achieves up to 98% of SGEMM and 99% of DGEMM using the Intel MKL, which is the current state-of-the-art library. Our implementation of the parallel DGEMM using all 68 cores of the KNL achieves up to 90% of DGEMM using the Intel MKL.},
+	numpages     = 11,
+	keywords     = {Knights Landing, AVX-512, Vectorization, Threading, Matrix---matrix multiplication}
 }
 @article{10.1145/1356052.1356053,
-author = {Goto, Kazushige and Geijn, Robert A. van de},
-title = {Anatomy of High-Performance Matrix Multiplication},
-year = {2008},
-issue_date = {May 2008},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-volume = {34},
-number = {3},
-issn = {0098-3500},
-url = {https://doi.org/10.1145/1356052.1356053},
-doi = {10.1145/1356052.1356053},
-abstract = {We present the basic principles that underlie the high-performance implementation of the matrix-matrix multiplication that is part of the widely used GotoBLAS library. Design decisions are justified by successively refining a model of architectures with multilevel memories. A simple but effective algorithm for executing this operation results. Implementations on a broad selection of architectures are shown to achieve near-peak performance.},
-journal = {ACM Trans. Math. Softw.},
-month = {may},
-articleno = {12},
-numpages = {25},
-keywords = {Linear algebra, matrix multiplication, basic linear algebra subprogrms}
+	title        = {Anatomy of High-Performance Matrix Multiplication},
+	author       = {Goto, Kazushige and Geijn, Robert A. van de},
+	year         = 2008,
+	month        = {may},
+	journal      = {ACM Trans. Math. Softw.},
+	publisher    = {Association for Computing Machinery},
+	address      = {New York, NY, USA},
+	volume       = 34,
+	number       = 3,
+	doi          = {10.1145/1356052.1356053},
+	issn         = {0098-3500},
+	url          = {https://doi.org/10.1145/1356052.1356053},
+	issue_date   = {May 2008},
+	abstract     = {We present the basic principles that underlie the high-performance implementation of the matrix-matrix multiplication that is part of the widely used GotoBLAS library. Design decisions are justified by successively refining a model of architectures with multilevel memories. A simple but effective algorithm for executing this operation results. Implementations on a broad selection of architectures are shown to achieve near-peak performance.},
+	articleno    = 12,
+	numpages     = 25,
+	keywords     = {Linear algebra, matrix multiplication, basic linear algebra subprogrms}
 }
-
 @article{ray,
-  author    = {Philipp Moritz and
-               Robert Nishihara and
-               Stephanie Wang and
-               Alexey Tumanov and
-               Richard Liaw and
-               Eric Liang and
-               William Paul and
-               Michael I. Jordan and
-               Ion Stoica},
-  title     = {Ray: {A} Distributed Framework for Emerging {AI} Applications},
-  journal   = {CoRR},
-  volume    = {abs/1712.05889},
-  year      = {2017},
-  url       = {http://arxiv.org/abs/1712.05889},
-  eprinttype = {arXiv},
-  eprint    = {1712.05889},
-  timestamp = {Mon, 13 Aug 2018 16:46:39 +0200},
-  biburl    = {https://dblp.org/rec/journals/corr/abs-1712-05889.bib},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
+	title        = {Ray: {A} Distributed Framework for Emerging {AI} Applications},
+	author       = {Philipp Moritz and Robert Nishihara and Stephanie Wang and Alexey Tumanov and Richard Liaw and Eric Liang and William Paul and Michael I. Jordan and Ion Stoica},
+	year         = 2017,
+	journal      = {CoRR},
+	volume       = {abs/1712.05889},
+	url          = {http://arxiv.org/abs/1712.05889},
+	eprinttype   = {arXiv},
+	eprint       = {1712.05889},
+	timestamp    = {Mon, 13 Aug 2018 16:46:39 +0200},
+	biburl       = {https://dblp.org/rec/journals/corr/abs-1712-05889.bib},
+	bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
 @inproceedings{cupy_learningsys2017,
-  author       = "Okuta, Ryosuke and Unno, Yuya and Nishino, Daisuke and Hido, Shohei and Loomis, Crissman",
-  title        = "CuPy: A NumPy-Compatible Library for NVIDIA GPU Calculations",
-  booktitle    = "Proceedings of Workshop on Machine Learning Systems (LearningSys) in The Thirty-first Annual Conference on Neural Information Processing Systems (NIPS)",
-  year         = "2017",
-  url          = "http://learningsys.org/nips17/assets/papers/paper_16.pdf"
+	title        = {CuPy: A NumPy-Compatible Library for NVIDIA GPU Calculations},
+	author       = {Okuta, Ryosuke and Unno, Yuya and Nishino, Daisuke and Hido, Shohei and Loomis, Crissman},
+	year         = 2017,
+	booktitle    = {Proceedings of Workshop on Machine Learning Systems (LearningSys) in The Thirty-first Annual Conference on Neural Information Processing Systems (NIPS)},
+	url          = {http://learningsys.org/nips17/assets/papers/paper_16.pdf}
 }
 @book{10.5555/265932,
-author = {Blackford, L. S. and Choi, J. and Cleary, A. and D'Azeuedo, E. and Demmel, J. and Dhillon, I. and Hammarling, S. and Henry, G. and Petitet, A. and Stanley, K. and Walker, D. and Whaley, R. C. and Dongarra, Jack J.},
-title = {ScaLAPACK User's Guide},
-year = {1997},
-isbn = {0898713978},
-publisher = {Society for Industrial and Applied Mathematics},
-address = {USA}
+	title        = {ScaLAPACK User's Guide},
+	author       = {Blackford, L. S. and Choi, J. and Cleary, A. and D'Azeuedo, E. and Demmel, J. and Dhillon, I. and Hammarling, S. and Henry, G. and Petitet, A. and Stanley, K. and Walker, D. and Whaley, R. C. and Dongarra, Jack J.},
+	year         = 1997,
+	publisher    = {Society for Industrial and Applied Mathematics},
+	address      = {USA},
+	isbn         = {0898713978}
 }
 @misc{NumS,
-  title = {NumS, A library that translates Python and NumPy to optimized distributed systems code.},
-  howpublished = {\url{https://github.com/nums-project/nums}}
+	title        = {NumS, A library that translates Python and NumPy to optimized distributed systems code.},
+	howpublished = {\url{https://github.com/nums-project/nums}}
 }
-
 @article{roofline,
-author = {Yang, Charlene and Kurth, Thorsten and Williams, Samuel},
-year = {2019},
-month = {11},
-pages = {},
-title = {Hierarchical Roofline analysis for GPUs: Accelerating performance optimization for the NERSC‐9 Perlmutter system},
-volume = {32},
-journal = {Concurrency and Computation: Practice and Experience},
-doi = {10.1002/cpe.5547}
+	title        = {Hierarchical Roofline analysis for GPUs: Accelerating performance optimization for the NERSC‐9 Perlmutter system},
+	author       = {Yang, Charlene and Kurth, Thorsten and Williams, Samuel},
+	year         = 2019,
+	month        = 11,
+	journal      = {Concurrency and Computation: Practice and Experience},
+	volume       = 32,
+	pages        = {},
+	doi          = {10.1002/cpe.5547}
 }
-
 @inproceedings{cupy,
-  author       = "Okuta, Ryosuke and Unno, Yuya and Nishino, Daisuke and Hido, Shohei and Loomis, Crissman",
-  title        = "CuPy: A NumPy-Compatible Library for NVIDIA GPU Calculations",
-  booktitle    = "Proceedings of Workshop on Machine Learning Systems (LearningSys) in The Thirty-first Annual Conference on Neural Information Processing Systems (NIPS)",
-  year         = "2017",
-  url          = "http://learningsys.org/nips17/assets/papers/paper_16.pdf"
+	title        = {CuPy: A NumPy-Compatible Library for NVIDIA GPU Calculations},
+	author       = {Okuta, Ryosuke and Unno, Yuya and Nishino, Daisuke and Hido, Shohei and Loomis, Crissman},
+	year         = 2017,
+	booktitle    = {Proceedings of Workshop on Machine Learning Systems (LearningSys) in The Thirty-first Annual Conference on Neural Information Processing Systems (NIPS)},
+	url          = {http://learningsys.org/nips17/assets/papers/paper_16.pdf}
 }
-
 @book{scalapack,
-author = {Blackford, L. S. and Choi, J. and Cleary, A. and D'Azeuedo, E. and Demmel, J. and Dhillon, I. and Hammarling, S. and Henry, G. and Petitet, A. and Stanley, K. and Walker, D. and Whaley, R. C. and Dongarra, Jack J.},
-title = {ScaLAPACK User's Guide},
-year = {1997},
-isbn = {0898713978},
-publisher = {Society for Industrial and Applied Mathematics},
-address = {USA}
+	title        = {ScaLAPACK User's Guide},
+	author       = {Blackford, L. S. and Choi, J. and Cleary, A. and D'Azeuedo, E. and Demmel, J. and Dhillon, I. and Hammarling, S. and Henry, G. and Petitet, A. and Stanley, K. and Walker, D. and Whaley, R. C. and Dongarra, Jack J.},
+	year         = 1997,
+	publisher    = {Society for Industrial and Applied Mathematics},
+	address      = {USA},
+	isbn         = {0898713978}
 }
-
 @misc{cublasmg,
-  title = {cuBLAS},
-  howpublished = {\url{https://developer.nvidia.com/cublas}}
+	title        = {cuBLAS},
+	howpublished = {\url{https://developer.nvidia.com/cublas}}
 }
-
-
 @misc{ray-lecture,
-    title = {Ray: A universal framework for distributed computing}, 
-    author = {I. Stoica},
-    howpublished = {\url{https://drive.google.com/file/d/1lWi4_vYvMcJJ6bEARvPEigad4WEdwPtq/view}}
+	title        = {Ray: A universal framework for distributed computing},
+	author       = {I. Stoica},
+	howpublished = {\url{https://drive.google.com/file/d/1lWi4_vYvMcJJ6bEARvPEigad4WEdwPtq/view}}
 }
-@misc{openai, title={Ai and Compute}, url={https://openai.com/blog/ai-and-compute/}, journal={OpenAI}, publisher={OpenAI}, author={Amodei, Dario}, year={2021}, month={Jun}} 
-
-
-
+@misc{openai,
+	title        = {Ai and Compute},
+	author       = {Amodei, Dario},
+	year         = 2021,
+	month        = {Jun},
+	journal      = {OpenAI},
+	publisher    = {OpenAI},
+	url          = {https://openai.com/blog/ai-and-compute/}
+}
 @misc{psc,
-  title = {Bridges-2 Specifications},
-  howpublished = {\url{https://www.psc.edu/resources/bridges-2/}}
+	title        = {Bridges-2 Specifications},
+	howpublished = {\url{https://www.psc.edu/resources/bridges-2/}}
 }
-
 @misc{aws,
-  title = {Amazon EC2 On-Demand Pricing},
-  howpublished = {\url{https://aws.amazon.com/ec2/pricing/on-demand/}}
+	title        = {Amazon EC2 On-Demand Pricing},
+	howpublished = {\url{https://aws.amazon.com/ec2/pricing/on-demand/}}
 }
-
 @misc{knl,
-  title = {Intel® Xeon Phi™ Processor 7250},
-  howpublished = {\url{https://ark.intel.com/content/www/us/en/ark/products/94035/intel-xeon-phi-processor-7250-16gb-1-40-ghz-68-core.html}}
+	title        = {Intel® Xeon Phi™ Processor 7250},
+	howpublished = {\url{https://ark.intel.com/content/www/us/en/ark/products/94035/intel-xeon-phi-processor-7250-16gb-1-40-ghz-68-core.html}}
 }
-
 @misc{v100,
-  title = {NVIDIA V100S Datasheet},
-  howpublished = {\url{https://images.nvidia.com/content/technologies/volta/pdf/volta-v100-datasheet-update-us-1165301-r5.pdf}}
+	title        = {NVIDIA V100S Datasheet},
+	howpublished = {\url{https://images.nvidia.com/content/technologies/volta/pdf/volta-v100-datasheet-update-us-1165301-r5.pdf}}
 }
-
 @misc{benchmarks,
-  title = {NumS GPU Benchmarks},
-  howpublished = {\url{https://github.com/briancpark/nums-gpu-benchmarks}}
+	title        = {NumS GPU Benchmarks},
+	howpublished = {\url{https://github.com/briancpark/nums-gpu-benchmarks}}
 }
-
 @misc{nums-pr,
-  title = {NumS GPU Pull Request},
-  howpublished = {\url{https://github.com/nums-project/nums/pull/548}}
+	title        = {NumS GPU Pull Request},
+	howpublished = {\url{https://github.com/nums-project/nums/pull/548}}
 }
-
-
 @incollection{NEURIPS2019_9015,
-title = {PyTorch: An Imperative Style, High-Performance Deep Learning Library},
-author = {Paszke, Adam and Gross, Sam and Massa, Francisco and Lerer, Adam and Bradbury, James and Chanan, Gregory and Killeen, Trevor and Lin, Zeming and Gimelshein, Natalia and Antiga, Luca and Desmaison, Alban and Kopf, Andreas and Yang, Edward and DeVito, Zachary and Raison, Martin and Tejani, Alykhan and Chilamkurthy, Sasank and Steiner, Benoit and Fang, Lu and Bai, Junjie and Chintala, Soumith},
-booktitle = {Advances in Neural Information Processing Systems 32},
-editor = {H. Wallach and H. Larochelle and A. Beygelzimer and F. d\textquotesingle Alch\'{e}-Buc and E. Fox and R. Garnett},
-pages = {8024--8035},
-year = {2019},
-publisher = {Curran Associates, Inc.},
-url = {http://papers.neurips.cc/paper/9015-pytorch-an-imperative-style-high-performance-deep-learning-library.pdf}
+	title        = {PyTorch: An Imperative Style, High-Performance Deep Learning Library},
+	author       = {Paszke, Adam and Gross, Sam and Massa, Francisco and Lerer, Adam and Bradbury, James and Chanan, Gregory and Killeen, Trevor and Lin, Zeming and Gimelshein, Natalia and Antiga, Luca and Desmaison, Alban and Kopf, Andreas and Yang, Edward and DeVito, Zachary and Raison, Martin and Tejani, Alykhan and Chilamkurthy, Sasank and Steiner, Benoit and Fang, Lu and Bai, Junjie and Chintala, Soumith},
+	year         = 2019,
+	booktitle    = {Advances in Neural Information Processing Systems 32},
+	publisher    = {Curran Associates, Inc.},
+	pages        = {8024--8035},
+	url          = {http://papers.neurips.cc/paper/9015-pytorch-an-imperative-style-high-performance-deep-learning-library.pdf},
+	editor       = {H. Wallach and H. Larochelle and A. Beygelzimer and F. d\textquotesingle Alch\'{e}-Buc and E. Fox and R. Garnett}
 }
-
 @misc{dask-cuda,
-  title = {Dask CUDA},
-  howpublished = {\url{https://github.com/rapidsai/dask-cuda}}
+	title        = {Dask CUDA},
+	howpublished = {\url{https://github.com/rapidsai/dask-cuda}}
 }
-
 @misc{borrill,
-    title = {Big Bang, Big Data, Big Iron: High Performance Computing for Cosmic Microwave Background Data Analysis}, 
-    author = {J. Borrill},
-    howpublished = {\url{https://drive.google.com/file/d/1XdihBuO8M8olTOWm2D28kCvqxITHND71/view}}
+	title        = {Big Bang, Big Data, Big Iron: High Performance Computing for Cosmic Microwave Background Data Analysis},
+	author       = {J. Borrill},
+	howpublished = {\url{https://drive.google.com/file/d/1XdihBuO8M8olTOWm2D28kCvqxITHND71/view}}
 }
-
-
 @article{alpa,
-  author    = {Lianmin Zheng and
-               Zhuohan Li and
-               Hao Zhang and
-               Yonghao Zhuang and
-               Zhifeng Chen and
-               Yanping Huang and
-               Yida Wang and
-               Yuanzhong Xu and
-               Danyang Zhuo and
-               Joseph E. Gonzalez and
-               Ion Stoica},
-  title     = {Alpa: Automating Inter- and Intra-Operator Parallelism for Distributed
-               Deep Learning},
-  journal   = {CoRR},
-  volume    = {abs/2201.12023},
-  year      = {2022},
-  url       = {https://arxiv.org/abs/2201.12023},
-  eprinttype = {arXiv},
-  eprint    = {2201.12023},
-  timestamp = {Wed, 02 Feb 2022 15:00:01 +0100},
-  biburl    = {https://dblp.org/rec/journals/corr/abs-2201-12023.bib},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
+	title        = {Alpa: Automating Inter- and Intra-Operator Parallelism for Distributed Deep Learning},
+	author       = {Lianmin Zheng and Zhuohan Li and Hao Zhang and Yonghao Zhuang and Zhifeng Chen and Yanping Huang and Yida Wang and Yuanzhong Xu and Danyang Zhuo and Joseph E. Gonzalez and Ion Stoica},
+	year         = 2022,
+	journal      = {CoRR},
+	volume       = {abs/2201.12023},
+	url          = {https://arxiv.org/abs/2201.12023},
+	eprinttype   = {arXiv},
+	eprint       = {2201.12023},
+	timestamp    = {Wed, 02 Feb 2022 15:00:01 +0100},
+	biburl       = {https://dblp.org/rec/journals/corr/abs-2201-12023.bib},
+	bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
-
-
-
-@book{openmp, 
-  title={Parallel programming in OpenMP}, 
-  author={Chandra, Rohit and Dagum, Leo and Kohr, David and Menon, Ramesh and Maydan, Dror and McDonald, Jeff}, 
-  year={2001}, 
-  publisher={Morgan kaufmann} 
+@book{openmp,
+	title        = {Parallel programming in OpenMP},
+	author       = {Chandra, Rohit and Dagum, Leo and Kohr, David and Menon, Ramesh and Maydan, Dror and McDonald, Jeff},
+	year         = 2001,
+	publisher    = {Morgan kaufmann}
 }
-
-@INPROCEEDINGS{mpi,
-  author={},
-  booktitle={Supercomputing '93:Proceedings of the 1993 ACM/IEEE Conference on Supercomputing}, 
-  title={MPI: A message passing interface}, 
-  year={1993},
-  volume={},
-  number={},
-  pages={878-883},
-  doi={10.1145/169627.169855}}
-
-
-@INPROCEEDINGS{upc++,
-  author={Bachan, John and Baden, Scott B. and Hofmeyr, Steven and Jacquelin, Mathias and Kamil, Amir and Bonachea, Dan and Hargrove, Paul H. and Ahmed, Hadia},
-  booktitle={2019 IEEE International Parallel and Distributed Processing Symposium (IPDPS)}, 
-  title={UPC++: A High-Performance Communication Framework for Asynchronous Computation}, 
-  year={2019},
-  volume={},
-  number={},
-  pages={963-973},
-  doi={10.1109/IPDPS.2019.00104}}
-
+@inproceedings{mpi,
+	title        = {MPI: A message passing interface},
+	author       = {},
+	year         = 1993,
+	booktitle    = {Supercomputing '93:Proceedings of the 1993 ACM/IEEE Conference on Supercomputing},
+	volume       = {},
+	number       = {},
+	pages        = {878--883},
+	doi          = {10.1145/169627.169855}
+}
+@inproceedings{upc++,
+	title        = {UPC++: A High-Performance Communication Framework for Asynchronous Computation},
+	author       = {Bachan, John and Baden, Scott B. and Hofmeyr, Steven and Jacquelin, Mathias and Kamil, Amir and Bonachea, Dan and Hargrove, Paul H. and Ahmed, Hadia},
+	year         = 2019,
+	booktitle    = {2019 IEEE International Parallel and Distributed Processing Symposium (IPDPS)},
+	volume       = {},
+	number       = {},
+	pages        = {963--973},
+	doi          = {10.1109/IPDPS.2019.00104}
+}
