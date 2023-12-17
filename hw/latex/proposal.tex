@@ -18,33 +18,33 @@
 
 
 \section{Hypothesis}
-We expect that a fully functional GPU backend to the NumS architecture can accelerate numerical computations under the NumS API. Due to the massive amounts of CUDA cores that Nvidia GPUs provide, numerical computations provided by the NumPy API should be accelerated. Adding GPU support should improve execution time of common kernel operations such as elementwise, linear, and tensor algebra operations. 
+We expect that a fully functional GPU backend to the NumS architecture can accelerate numerical computations under the NumS API. Due to the massive amounts of CUDA cores that Nvidia GPUs provide, numerical computations provided by the NumPy API should be accelerated. Adding GPU support should improve execution time of common kernel operations such as elementwise, linear, and tensor algebra operations.
 
 \section{Context}
-I will be working with a team of 3. Kunal Agarwal and Parth Baokar will be my partners. This project will be off of a branch of the NumS repository and we'll be working on a implementation of a GPU backend to merge once finalized. \cite{NumS} NumS is an extension of NumPy that scales numerical functions to the cloud using Ray. Recently, we've had some other backends implemented that use Dask and MPI. The reason why MPI was implemented was to make this easily runnable on HPC/cluster environment like Cori. 
+I will be working with a team of 3. Kunal Agarwal and Parth Baokar will be my partners. This project will be off of a branch of the NumS repository and we'll be working on a implementation of a GPU backend to merge once finalized. \cite{NumS} NumS is an extension of NumPy that scales numerical functions to the cloud using Ray. Recently, we've had some other backends implemented that use Dask and MPI. The reason why MPI was implemented was to make this easily runnable on HPC/cluster environment like Cori.
 
 For a long time, there was interest in adding GPU support to compare performance to other machine learning frameworks fashioned towards deep learning such as PyTorch and TensorFlow.
 
 \section{Prior Work}
-This work builds on top of prior works. Obviously, it is built with Ray and it's able to utilize features such as remote functions and the Object Store to serve as glue in a distributed system to enable scalability. \cite{DBLP:journals/corr/abs-1712-05889} NumS also uses some ideas from ScalaPACK where it tries to avoid communication as much as possible when executing numerical functions. \cite{10.5555/265932}.  NumS uses a block-cyclic data layout similar to ScaLAPACK to load balance data distribution and locality for it's optimizer and scheduler. Of course, on a shared memory system, this abstraction exists, but comes with no communication overhead. 
+This work builds on top of prior works. Obviously, it is built with Ray and it's able to utilize features such as remote functions and the Object Store to serve as glue in a distributed system to enable scalability. \cite{DBLP:journals/corr/abs-1712-05889} NumS also uses some ideas from ScalaPACK where it tries to avoid communication as much as possible when executing numerical functions. \cite{10.5555/265932}.  NumS uses a block-cyclic data layout similar to ScaLAPACK to load balance data distribution and locality for it's optimizer and scheduler. Of course, on a shared memory system, this abstraction exists, but comes with no communication overhead.
 
 We will also be using CuPy to write optimzied GPU kernels. CuPy can execute NumPy-like functions on CUDA supported frameworks. It also serves as a drop-in replacement for NumPy as it has a lot of coverage for their API. \cite{cupy_learningsys2017}
 
 \section{Empirical Methodology}
-To investigate the question, we will implement a GPU backend/kernel that can execute CuPy. This should integrate well with the already existing integration between Ray and NumPy in NumS. Resources needed will be correct library installations, debugging/development software, and GPU hardware. For hardware, we expect to use not only one, but multiple GPUs to test how well our library can scale, as this is the purpose of Ray, to easily scale programs to distributed systems without any drawbacks. 
+To investigate the question, we will implement a GPU backend/kernel that can execute CuPy. This should integrate well with the already existing integration between Ray and NumPy in NumS. Resources needed will be correct library installations, debugging/development software, and GPU hardware. For hardware, we expect to use not only one, but multiple GPUs to test how well our library can scale, as this is the purpose of Ray, to easily scale programs to distributed systems without any drawbacks.
 
 The Bridges-2 nodes are equipped with 8 NVIDIA V100. For development, we should expect to use at most 2 GPUs. 1 for making sure CuPy and Ray works under NumS and 2 to make sure it scales well in distributed settings. Once confident, we can benchmark weak scaling tests up to 8 GPUs in the end. Given enough time, we could experiment multiple nodes and multiple GPUs to explore inter-node performance, but the priority for now is to focus on intra-node communication in GPUs.
 
 Optionally, given enough time we could run “real world” use cases of some benchmarks. Such as running a MLP compared to CPU and GPU. NumS also provides integration with Modin, so some dataframe manipulation and model training performance could also be explored, to show how well the full data science pipeline works with Ray.
 
 \section{Challenges and Obstacles}
-Some challenges might be having to learn how GPU support can be enabled with Ray and CuPy. But once that is cleared, it should be very straightforward to implement by copying the existing implementation with NumPy in NumS. 
+Some challenges might be having to learn how GPU support can be enabled with Ray and CuPy. But once that is cleared, it should be very straightforward to implement by copying the existing implementation with NumPy in NumS.
 
 An obstacle we may face is that GPU performance may not perform as well compared to CPU. Profiling tools should allow us to analyze these obstacles and explain why they aren’t as performant as expected.
 
-Some troubles we may face is that Ray was not designed to be run on HPC systems, or at least heavily tested. It was more designed towards cloud computing such as AWS or GCP. As Ion Stoica mentioned in the guest lecture, there are also some challenges when trying to make Ray work with the GPU. First of all, you need to pin stateful actors to the GPU, such that the overhead of initializing GPU environment is pulled down. \cite{Ray} Also, it's very expensive to move memory between the CPU and GPU, as we have seen in the GPU HW. This may be hard to do with NumS as the Object Store memory lives entirely on the CPU memory. So we will have to see how we can get around this. 
+Some troubles we may face is that Ray was not designed to be run on HPC systems, or at least heavily tested. It was more designed towards cloud computing such as AWS or GCP. As Ion Stoica mentioned in the guest lecture, there are also some challenges when trying to make Ray work with the GPU. First of all, you need to pin stateful actors to the GPU, such that the overhead of initializing GPU environment is pulled down. \cite{Ray} Also, it's very expensive to move memory between the CPU and GPU, as we have seen in the GPU HW. This may be hard to do with NumS as the Object Store memory lives entirely on the CPU memory. So we will have to see how we can get around this.
 
 \bibliographystyle{ieeetr}
-\bibliography{references} 
+\bibliography{references}
 
 \end{document}
