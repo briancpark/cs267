@@ -38,20 +38,18 @@ jobs:
       run: |
         latexindent --version
 
-    - name: Change to LaTeX directory
-      run: cd hw/latex
-
     - name: Check LaTeX formatting
+      working-directory: hw/latex
       run: make check
 
     - name: Compile LaTeX documents
+      working-directory: hw/latex
       run: make all
 
     - name: Find PDF files
+      working-directory: hw/latex
       id: find_pdfs
-      run: |
-        cd hw/latex
-        echo "::set-output name=pdfs::$(ls *.pdf)"
+      run: echo "::set-output name=pdfs::$(ls *.pdf)"
 
   upload-pdfs:
     needs: build-and-lint
