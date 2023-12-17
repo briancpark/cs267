@@ -30,10 +30,10 @@ We used variety of techniques to optimize the problem of parallelizing $n$-body 
 We defined our bins as vectors:
 
 \begin{itemize}
-    \item \verb|vector<particle_t*> bin_t| \\
-        This holds pointers to all of the particles that lie within a bin.
-    \item \verb|bin_t* bins| \\
-        This holds the vector of bins stored in row-major order.
+	\item \verb|vector<particle_t*> bin_t| \\
+	      This holds pointers to all of the particles that lie within a bin.
+	\item \verb|bin_t* bins| \\
+	      This holds the vector of bins stored in row-major order.
 \end{itemize}
 
 We make sure that particles are stored in bins. The number of bins is fixed which is why we use an array of bins. The bins themselves change in size at each simulation step when they move around, which is why we use \verb|std::vector|. Note that \verb|std::vector| is not thread-safe, so we need to implement the synchronization ourselves, which OpenMP directives conveniently provide.
@@ -60,86 +60,86 @@ The first issue in parallelism with OpenMP was WAW (write after write) hazards. 
 We evaluate the results of $n$-body particle simulations with random seed set to $42$ to make results reproducible.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=6in]{figures/openmp_weak_scaling_times.png}
-\caption{OpenMP Weak Scaling}
-\label{fig:openmp-weak-scaling}
+	\centering
+	\includegraphics[width=6in]{figures/openmp_weak_scaling_times.png}
+	\caption{OpenMP Weak Scaling}
+	\label{fig:openmp-weak-scaling}
 \end{figure}
 
 Figure \ref{fig:openmp-weak-scaling} shows the weak scaling when scaled up to all 272 threads of the Intel KNL processor. We set the number of particles initially to 10000 and scale the the number of particles with number of threads or processors with $p$. We made sure that processors were evenly spread by setting the environment variable \verb|OMP_PLACES=cores| and \verb|OMP_PROC_BIND=spread|.
 
-In an ideal weak scaling scenario, we would expect to see a horizontal line for a serial runtime of $O(n)$ complexity. But we see that as the work increases, the time also increases as well, indicating that there must some overhead. Because not all of the simulation is parallelizable, we are also facing Amdahl's (Heartbreaking) Law. We reach just over 30 seconds for a simulation on all 272 threads on the KNL processor. 
+In an ideal weak scaling scenario, we would expect to see a horizontal line for a serial runtime of $O(n)$ complexity. But we see that as the work increases, the time also increases as well, indicating that there must some overhead. Because not all of the simulation is parallelizable, we are also facing Amdahl's (Heartbreaking) Law. We reach just over 30 seconds for a simulation on all 272 threads on the KNL processor.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=6in]{figures/openmp_weak_scaling_efficiency.png}
-\caption{OpenMP Weak Scaling Efficiency}
-\label{fig:openmp-weak-scaling-efficiency}
+	\centering
+	\includegraphics[width=6in]{figures/openmp_weak_scaling_efficiency.png}
+	\caption{OpenMP Weak Scaling Efficiency}
+	\label{fig:openmp-weak-scaling-efficiency}
 \end{figure}
 
 Figure \ref{fig:openmp-weak-scaling-efficiency} shows the weak scaling efficiency of our $n$-body simulation on OpenMP. We can see that our weak scaling efficiency is obviously highest at 1 processor. But it drastically decreases when we are at 2 processors down to 75\%. This large drop off may be due a large overhead of lock contention or any other synchronization overheads that wouldn't occur in a single threaded context. We see that is indeed the case in our analysis of performance breakdown later on.
 
-We began to notice that utilizing all the 4-way hyperthreading on Intel KNL processor did not bring any significant speedups. This is mainly due to a core having only one ALU and 4 hyperthreads competing for resources. Thus, there is not much speedup since our simulation is arithmetically intensive. To accurately benchmark and analyze our performance, we tried again at a finer grain level by rerunning weak scaling from 1 to 68 cores. 
+We began to notice that utilizing all the 4-way hyperthreading on Intel KNL processor did not bring any significant speedups. This is mainly due to a core having only one ALU and 4 hyperthreads competing for resources. Thus, there is not much speedup since our simulation is arithmetically intensive. To accurately benchmark and analyze our performance, we tried again at a finer grain level by rerunning weak scaling from 1 to 68 cores.
 
-Figure \ref{fig:openmp-weak-scaling-fine} shows the weak scaling times, and we clearly see that it looks much better. Our performance looks more like a horizontal line and we are sustaining performance after 2 processes or OpenMP threads. We start at 7.34 seconds at 1 core and reach a maximum of 13.50 seconds at 68 cores. The jump to two processors causes time to increase to 9.61 seconds, and we gradually increase the number of work per processor as we scale the number of work with cores. 
+Figure \ref{fig:openmp-weak-scaling-fine} shows the weak scaling times, and we clearly see that it looks much better. Our performance looks more like a horizontal line and we are sustaining performance after 2 processes or OpenMP threads. We start at 7.34 seconds at 1 core and reach a maximum of 13.50 seconds at 68 cores. The jump to two processors causes time to increase to 9.61 seconds, and we gradually increase the number of work per processor as we scale the number of work with cores.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=6in]{figures/openmp_weak_scaling_times_fine.png}
-\caption{OpenMP Weak Scaling Fine}
-\label{fig:openmp-weak-scaling-fine}
+	\centering
+	\includegraphics[width=6in]{figures/openmp_weak_scaling_times_fine.png}
+	\caption{OpenMP Weak Scaling Fine}
+	\label{fig:openmp-weak-scaling-fine}
 \end{figure}
 
 In Figure \ref{fig:openmp-weak-scaling-efficiency-fine}, we see the efficiency at a fine grain level. Again, we see that it is sustained around 60\%. Looking at how horizontal the line is compared to the previous results with all 272 threads, the efficiency is still bad. But how the scaling is sustained after the initial overhead, we see that these show some good scaling.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=6in]{figures/openmp_weak_scaling_efficiency_fine.png}
-\caption{OpenMP Weak Scaling Efficiency Fine}
-\label{fig:openmp-weak-scaling-efficiency-fine}
+	\centering
+	\includegraphics[width=6in]{figures/openmp_weak_scaling_efficiency_fine.png}
+	\caption{OpenMP Weak Scaling Efficiency Fine}
+	\label{fig:openmp-weak-scaling-efficiency-fine}
 \end{figure}
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=6in]{figures/openmp_strong_scaling_times.png}
-\caption{OpenMP Strong Scaling}
-\label{fig:openmp-strong-scaling}
+	\centering
+	\includegraphics[width=6in]{figures/openmp_strong_scaling_times.png}
+	\caption{OpenMP Strong Scaling}
+	\label{fig:openmp-strong-scaling}
 \end{figure}
 
 Next we did experiments on strong scaling on 1000000 particles, and only varied the number of processors or OpenMP threads. Figure \ref{fig:openmp-strong-scaling} shows the strong scaling time. As expected, the time decreases as we increase the number of processors. We start from 876.91 seconds on one thread to 20.04 seconds to 272 threads, giving us a $43.7\times$ speedup. Although that is not $272\times$ speedup, it is still pretty substantial speedup.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=6in]{figures/openmp_strong_scaling_efficiency.png}
-\caption{OpenMP Strong Scaling}
-\label{fig:openmp-strong-scaling-efficiency}
+	\centering
+	\includegraphics[width=6in]{figures/openmp_strong_scaling_efficiency.png}
+	\caption{OpenMP Strong Scaling}
+	\label{fig:openmp-strong-scaling-efficiency}
 \end{figure}
 
 To see this better, we observe the strong scaling efficiency shown in Figure \ref{fig:openmp-strong-scaling-efficiency}. We see that the efficiency drops to around 71.3\% at 2 threads or processors. When scaled up to all 272 threads, we get a disappointing efficiency of 28.4\%. Again, we have the same suspicions from weak scaling, where our simulation becomes not as efficient with the utilization of hyperthreads.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=6in]{figures/openmp_strong_scaling_times_fine.png}
-\caption{OpenMP Strong Scaling Fine}
-\label{fig:openmp-strong-scaling-fine}
+	\centering
+	\includegraphics[width=6in]{figures/openmp_strong_scaling_times_fine.png}
+	\caption{OpenMP Strong Scaling Fine}
+	\label{fig:openmp-strong-scaling-fine}
 \end{figure}
 
 Figure \ref{fig:openmp-strong-scaling-fine} shows the strong scaling at a fine grain level up to only 68 cores/threads. To see the results better, Figure \ref{fig:openmp-strong-scaling-efficiency-fine} shows the strong scaling efficiency.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=6in]{figures/openmp_strong_scaling_efficiency_fine.png}
-\caption{OpenMP Strong Scaling Efficiency Fine}
-\label{fig:openmp-strong-scaling-efficiency-fine}
+	\centering
+	\includegraphics[width=6in]{figures/openmp_strong_scaling_efficiency_fine.png}
+	\caption{OpenMP Strong Scaling Efficiency Fine}
+	\label{fig:openmp-strong-scaling-efficiency-fine}
 \end{figure}
 
 The results look much better when looking at the efficiency, where the efficiency is sustained after 2 processors. At 2 processors or OpenMP threads, we have a strong scaling efficiency of 70.1\%. And that is slowly decreased to 64.4\% at 68 threads. Again, we see similar trends from weak scaling, where there is around 30\% overhead lost when scaling up to two threads. If we could've done this any better, we would've changed how to optimize the serial code to be more parallelizable to avoid these potential issues arised from lock contention.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=6in]{figures/openmp_compared.png}
-\caption{Naive vs. Serial vs. OpenMP}
-\label{fig:openmp-compared}
+	\centering
+	\includegraphics[width=6in]{figures/openmp_compared.png}
+	\caption{Naive vs. Serial vs. OpenMP}
+	\label{fig:openmp-compared}
 \end{figure}
 
 Figure \ref{fig:openmp-compared} compares all of the implementations on a log-log scale. We could not comprehensively collect results for the naive runtimes, since it would run too long, but we see that our serial $O(n)$ implemntations drastically speed it up and our OpenMP implementation accelerates and scales the performance even further.
@@ -148,10 +148,10 @@ Figure \ref{fig:openmp-compared} compares all of the implementations on a log-lo
 For performance breakdown, we profiled with ARM MAP. We first profiled our particle simulation on OpenMP with 1 million particles in order to collect enough samples for the trace.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=6in]{figures/openmp-profile.png}
-\caption{ARM MAP Profile Trace}
-\label{fig:openmp-profile-trace}
+	\centering
+	\includegraphics[width=6in]{figures/openmp-profile.png}
+	\caption{ARM MAP Profile Trace}
+	\label{fig:openmp-profile-trace}
 \end{figure}
 
 The ARM MAP tool was very simple and intuitive to use, and it gave us some clear insights about our performance and bottlenecks. Figure \ref{fig:openmp-profile-trace} shows a sample trace from a simulation of 1 million particles on 68 cores. We see that 3.9\% of our code was spent on the main thread, and 70.1\% of it was spent in OpenMP. There is 24.3\% spent in overhead of OpenMP, which is the initialization of OpenMP threads and any synchronization primitives. 1.8\% of the runtime was uncategorized. Considering that there is 30\% of non-parallelized code, this looked pretty good. And it also empirically supports our previous claim that not all of the code was parallizable. Thus, our huge dropoff in performance once we started scaling to two processors for both weak and strong scaling can be explained.
@@ -159,61 +159,61 @@ The ARM MAP tool was very simple and intuitive to use, and it gave us some clear
 For a better understanding of how the compute and synchronization time is spent, we profiled simulations on 100000 particles on $p = {1, 2, 4, 8, 16, 32, 64, 68}$ processors. Figure \ref{fig:openmp-profile} shows the breakdown.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=6in]{figures/openmp_profiling.png}
-\caption{OpenMP Performance Breakdown}
-\label{fig:openmp-profile}
+	\centering
+	\includegraphics[width=6in]{figures/openmp_profiling.png}
+	\caption{OpenMP Performance Breakdown}
+	\label{fig:openmp-profile}
 \end{figure}
 
 Figure \ref{fig:openmp-profile-stacked} shows the breakdown stacked.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=6in]{figures/openmp_profiling_stacked.png}
-\caption{OpenMP Performance Breakdown Stacked}
-\label{fig:openmp-profile-stacked}
+	\centering
+	\includegraphics[width=6in]{figures/openmp_profiling_stacked.png}
+	\caption{OpenMP Performance Breakdown Stacked}
+	\label{fig:openmp-profile-stacked}
 \end{figure}
 
-Lastly, Figure \ref{fig:openmp-profile-stacked-percentage} shows a better visualization of the percentage of each function stacked. 
+Lastly, Figure \ref{fig:openmp-profile-stacked-percentage} shows a better visualization of the percentage of each function stacked.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=6in]{figures/openmp_profiling_stacked_percentage.png}
-\caption{OpenMP Performance Breakdown Stacked Percentage}
-\label{fig:openmp-profile-stacked-percentage}
+	\centering
+	\includegraphics[width=6in]{figures/openmp_profiling_stacked_percentage.png}
+	\caption{OpenMP Performance Breakdown Stacked Percentage}
+	\label{fig:openmp-profile-stacked-percentage}
 \end{figure}
 
-We see that synchronization indeed takes a significant portion of the runtime. We wish to do more fine grain analysis if we were able to, because we're curious if there is any load imbalance between the bins that causes this significant portion of synchronization. But fortunately, we see that the percentage the simulation spends in computing, under \verb|simulate_one_step()| and \verb|binning|, ranges between 60-85\%. 
+We see that synchronization indeed takes a significant portion of the runtime. We wish to do more fine grain analysis if we were able to, because we're curious if there is any load imbalance between the bins that causes this significant portion of synchronization. But fortunately, we see that the percentage the simulation spends in computing, under \verb|simulate_one_step()| and \verb|binning|, ranges between 60-85\%.
 
 \section{Can We Do Better?}
-Future possible optimizations include prefetching, and finding a smaller bin size to use. This is to exploit cache locality since a thread/core will share L1 and L2 cache. Lower levels of the memory hierarchy like L3 and main memory are shared amongst cores. If we wanted, we could also exploit DLP (data level parallelism) with the use of SIMD. This type of optimization is much harder to do since we're working with classes and data is not necessary tightly packed and DLP friendly like the data in our matrix multiplication homework. Compared the the TLP (thread level parallelism) that KNL node provides (68 cores/272 threads), it's a much easier optimization to achieve speedup with purely MIMD. Finally, it's possible we used more synchronization than necessary for correctness. For instance, a few barriers and locks could possibly be removed if done correctly and we could've resorted to using atomics instead. 
+Future possible optimizations include prefetching, and finding a smaller bin size to use. This is to exploit cache locality since a thread/core will share L1 and L2 cache. Lower levels of the memory hierarchy like L3 and main memory are shared amongst cores. If we wanted, we could also exploit DLP (data level parallelism) with the use of SIMD. This type of optimization is much harder to do since we're working with classes and data is not necessary tightly packed and DLP friendly like the data in our matrix multiplication homework. Compared the the TLP (thread level parallelism) that KNL node provides (68 cores/272 threads), it's a much easier optimization to achieve speedup with purely MIMD. Finally, it's possible we used more synchronization than necessary for correctness. For instance, a few barriers and locks could possibly be removed if done correctly and we could've resorted to using atomics instead.
 
 We think we will be able to improve the $p$-times speedup by removing synchronization, because the synchronization will cause a significant amount of usage of time based on our performance. And it will help, because synchronization stalls code to enter critical section. As we see from our performance breakdown, there is a lot of overhead that can be brought down with improving synchronization.
 
 We also could've tried to utilize FMA, as there are some multiply accumulates. This can theoretically increase our performance $2\times$. But because we were tested on correctness against an implementation that didn't use any FMAs, we didn't utilize it. FMAs can provide more accurate precision since it does one rounding instead of two on separate multiply and add. But since a small precision error can deviate the final answer by a lot, it was not feasible to implement in order to pass the correctness checks.
 
-In order to theoretically determine if we can do better, we also counted the number of FLOPs (floating point operations) to compute the FLOPS (floating point operations per second). This will determine if we are near peak performance or the theoretical peak of the KNL processor. 
+In order to theoretically determine if we can do better, we also counted the number of FLOPs (floating point operations) to compute the FLOPS (floating point operations per second). This will determine if we are near peak performance or the theoretical peak of the KNL processor.
 
-The derivation of theoretical peak will be slightly different than the ones we were given in our previous homework. This is because we are not utilizing any SIMD instructions or utilizing FMA, which can increase the peak performance by $16\times$. 
+The derivation of theoretical peak will be slightly different than the ones we were given in our previous homework. This is because we are not utilizing any SIMD instructions or utilizing FMA, which can increase the peak performance by $16\times$.
 
 Thus, our theoretical peak for this simulation can be defined as:
 
 $$\frac{1.4 \times 10^9 \textrm{ instructions}}{\textrm{second}} * 68 \textrm{ cores} = 95.2 \textrm{ GFLOPS}$$
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=6in]{figures/serial_flops.png}
-\caption{Serial MFLOPS}
-\label{fig:serial-flops}
+	\centering
+	\includegraphics[width=6in]{figures/serial_flops.png}
+	\caption{Serial MFLOPS}
+	\label{fig:serial-flops}
 \end{figure}
 
 We counted the number of FLOPs by counting the number of operations manually on the serial version of the code. Figure \ref{fig:serial-flops} shows the performance. We see that performance drops off, indicating that particles don't fit in cache anymore and we suffer from increased memory accesses with larger number of particles. We hit a peak of 294.87 MFLOPS.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=6in]{figures/openmp_flops.png}
-\caption{OpenMP GFLOPS}
-\label{fig:openmp-flops}
+	\centering
+	\includegraphics[width=6in]{figures/openmp_flops.png}
+	\caption{OpenMP GFLOPS}
+	\label{fig:openmp-flops}
 \end{figure}
 
 We reach a peak of 8.9120 GFLOPS when running simulations with OpenMP. Thus, our solution reaches 9.36\% of the theoretical peak. This number is embarassingly low, but understandable. The key to reaching high compute intensity is to hide latencies, especially with memory. Because our code contains a lot of memory management, such as binning and accessing data structures through pointer chasing, we are memory bounded. In order to reach higher performance, careful rethinking of how to design the algorithm and memory management must be considered.
@@ -222,5 +222,5 @@ We reach a peak of 8.9120 GFLOPS when running simulations with OpenMP. Thus, our
 Xuan started off with implementation of particle binning to reduce the time complexity to $O(n)$. Brian was able to figure out an algorithmic way to speed up serial performance by reducing the number of comparisons per each iteration in a bin. Andrew was able to speed up Brian's implementation even more to a record time of 876.9 seconds (1 million particles) with a few more optimizations related to memory management. For OpenMP, Xuan and Brian was able to figure out how to add OpenMP directives to optimize code. Brian figured out how to parallelize the code as much as possible, as well as adding locks and synchronization primitives to ensure correctness.
 
 \bibliographystyle{ieeetr}
-\bibliography{references} 
+\bibliography{references}
 \end{document}

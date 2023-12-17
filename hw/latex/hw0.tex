@@ -26,8 +26,7 @@ According to a research paper from our own faculty, one of the main bottlenecks 
 Another issue with dealing with sparse array computation is managing load balancing. \cite{10.1145/3149704.3149767} We would also have to consider different ways of formatting a sparse matrix to make it appealing for SIMD units to efficiently operate on data. You don't want SIMD vector that operates over zero values, so finding a format that can utilize both SIMD and MIMD, as well as overcoming the communication bottleneck is a plus. Another research paper performed their experiments on GPUs as well to analyze these affects on the Swiss National Supercomputing Centre, which is also a supercomputer 20th on the Top500 today. In general, sparse computations are notorious for achieving fractional peak performance, which the analysis shows. Interestingly enough, the number of non-zero elements vs. GFLOPS resemble a roofline model.
 
 \bibliographystyle{ieeetr}
-\bibliography{references} 
-
+\bibliography{references}
 
 \end{document}
 

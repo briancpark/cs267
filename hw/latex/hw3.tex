@@ -36,7 +36,7 @@ The \verb|find| and \verb|insert| operations in the serial implementation first 
 
 Requesting a slot and checking whether a slot is in use becomes an atomic operation. Since it’s possible multiple processors may want to write to the same spot, we need to have some synchronization in order to avoid a deadlock. We only use atomic operations on the used array since if we have successfully reserved a slot, then there is no need to include any synchronization primitives for reading and writing from the data array as all accesses will be safe. We also need to use atomic loads for checking slot availability since in UPC++, any data structure that is operated on atomically should always only be accessed atomically for consistent results. We needed to use \verb|rput| and \verb|rget| to modify values within the data array, since it’s possible that processors may need to access data that they do not own.
 
-This distributed hash table with a vector of shared pointers so that processors could have access to the physically separated chunks is the only optimization that we attempted, and we achieved good performance at the end. 
+This distributed hash table with a vector of shared pointers so that processors could have access to the physically separated chunks is the only optimization that we attempted, and we achieved good performance at the end.
 
 \subsection{Comparison of Implementation in UPC++, MPI, and OpenMP}
 
@@ -64,6 +64,6 @@ The human synthetic benchmarks show good scaling with inter-node and intra-node 
 Kunal, Brian, and Parth all equally worked on all parts of the project.
 
 \bibliographystyle{ieeetr}
-\bibliography{references} 
+\bibliography{references}
 
 \end{document}

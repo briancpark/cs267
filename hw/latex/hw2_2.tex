@@ -25,16 +25,16 @@
 \section{Introduction}
 We used variety of techniques to optimize the problem of parallelizing $n$-body particle simulation on the Cori KNL node. We used the $O(n)$ solution from our previous homework to accelerate it with MPI (Message Passing Interface) \cite{mpi}.
 
-\section{MPI} 
+\section{MPI}
 
 \subsection{Data Structures}
 Used the same binning idea that we derived from homework 2-1. To be more specific:
 
 \begin{itemize}
-    \item \verb|typedef vector<particle_t*> bin_t| \\
-        This holds pointers to all of the particles that lie within a bin.
-    \item \verb|bin_t* bins| \\
-        This holds the vector of bins stored in row-major order.
+	\item \verb|typedef vector<particle_t*> bin_t| \\
+	      This holds pointers to all of the particles that lie within a bin.
+	\item \verb|bin_t* bins| \\
+	      This holds the vector of bins stored in row-major order.
 \end{itemize}
 
 
@@ -47,46 +47,46 @@ We make sure that particles are stored in bins. The number of bins is fixed, whi
 We evaluate the results of $n$-body particle simulations with random seed set to $42$ to make results reproducible.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=6in]{figures/mpi_weak_scaling_times.png}
-\caption{MPI Weak Scaling}
-\label{fig:mpi-weak-scaling}
+	\centering
+	\includegraphics[width=6in]{figures/mpi_weak_scaling_times.png}
+	\caption{MPI Weak Scaling}
+	\label{fig:mpi-weak-scaling}
 \end{figure}
 
 Figure \ref{fig:mpi-weak-scaling} shows the weak scaling of MPI as it scales with 10000 particles per processor. We extend this to two nodes when running 136 processors (2 nodes $\times$ 68 processors).
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=6in]{figures/mpi_weak_scaling_efficiency.png}
-\caption{MPI Weak Scaling Efficiency}
-\label{fig:mpi-weak-scaling-efficiency}
+	\centering
+	\includegraphics[width=6in]{figures/mpi_weak_scaling_efficiency.png}
+	\caption{MPI Weak Scaling Efficiency}
+	\label{fig:mpi-weak-scaling-efficiency}
 \end{figure}
 
 Figure \ref{fig:mpi-weak-scaling-efficiency} shows the weak scaling efficiency of MPI. We see that it somewhat sustains performance. When jumping to two processors, it has 93.6\% efficiency and then gradually drops to 64.2\% efficiency when scaled up to 136 processors.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=6in]{figures/mpi_strong_scaling_times.png}
-\caption{MPI Strong Scaling}
-\label{fig:mpi-strong-scaling}
+	\centering
+	\includegraphics[width=6in]{figures/mpi_strong_scaling_times.png}
+	\caption{MPI Strong Scaling}
+	\label{fig:mpi-strong-scaling}
 \end{figure}
 
 Figure \ref{fig:mpi-strong-scaling} shows the strong scaling of our simulation with MPI for 1 million particles. We see that it decreases as expected. It reaches 14.8 seconds when all of the 136 cores are utilized.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=6in]{figures/mpi_strong_scaling_efficiency.png}
-\caption{MPI Strong Scaling Efficiency}
-\label{fig:mpi-strong-scaling-efficiency}
+	\centering
+	\includegraphics[width=6in]{figures/mpi_strong_scaling_efficiency.png}
+	\caption{MPI Strong Scaling Efficiency}
+	\label{fig:mpi-strong-scaling-efficiency}
 \end{figure}
 
-To see the results better, Figure \ref{fig:mpi-strong-scaling-efficiency} shows the strong scaling efficiency. There is a large dropoff in efficiency to 2 processors, giving 54.8\% efficiency. It sustains performance down to 43.7\% efficiency when all 136 cores are used. This is pretty low effiency, but considering that it is sustained, we deemed it scalable. This huge dropoff must have been due to the high communication overhead added on top of our synchronization overhead. We see later in our performance breakdown, that MPI communication overhead is indeed the main cause. 
+To see the results better, Figure \ref{fig:mpi-strong-scaling-efficiency} shows the strong scaling efficiency. There is a large dropoff in efficiency to 2 processors, giving 54.8\% efficiency. It sustains performance down to 43.7\% efficiency when all 136 cores are used. This is pretty low effiency, but considering that it is sustained, we deemed it scalable. This huge dropoff must have been due to the high communication overhead added on top of our synchronization overhead. We see later in our performance breakdown, that MPI communication overhead is indeed the main cause.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=6in]{figures/mpi_compared.png}
-\caption{Naive vs. Serial vs. OpenMP vs. MPI}
-\label{fig:mpi-compared}
+	\centering
+	\includegraphics[width=6in]{figures/mpi_compared.png}
+	\caption{Naive vs. Serial vs. OpenMP vs. MPI}
+	\label{fig:mpi-compared}
 \end{figure}
 
 Figure \ref{fig:mpi-compared} shows the performance comparison between all of the other programming systems we have implemented so far for the $n$-body simulation.
@@ -96,10 +96,10 @@ Figure \ref{fig:mpi-compared} shows the performance comparison between all of th
 Profiling with MPI was difficult, as some of the profilers did not work smoothly with multiple nodes. We were able to successfully profile with Arm Performance Reports with limited configurations. Figure \ref{fig:mpi-profile-trace} shows a sample output of the trace. Embarrassingly, it shows that 98.8\% of our code is MPI bound, telling us that most of the time is spent in communication overheads. Due to the difficulty of debugging with MPI and working with distributed systems, we wish to improve this more if given more time and experience with MPI.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=6in]{figures/mpi_profile.png}
-\caption{Arm Performance Reports MPI Profile Trace}
-\label{fig:mpi-profile-trace}
+	\centering
+	\includegraphics[width=6in]{figures/mpi_profile.png}
+	\caption{Arm Performance Reports MPI Profile Trace}
+	\label{fig:mpi-profile-trace}
 \end{figure}
 
 \section{Can We Do Better?}
@@ -109,10 +109,10 @@ Like the previous project, we computed the theoretical peak of our system on 2 n
 $$\frac{1.4 \times 10^9 \textrm{ instructions}}{\textrm{second}} * 136 \textrm{ cores} = 190.4 \textrm{ GFLOPS}$$
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=6in]{figures/mpi_flops.png}
-\caption{MPI FLOPS}
-\label{fig:mpi-flops}
+	\centering
+	\includegraphics[width=6in]{figures/mpi_flops.png}
+	\caption{MPI FLOPS}
+	\label{fig:mpi-flops}
 \end{figure}
 
 When computing the performance, we see that we reach a peak of 10.84 GFLOPS, which is 5.7\% of theoretical peak. This is around $2\times$ worse than our OpenMP solution. Trying to make our simulation communication optimal was very difficult. In order to do substantially better, we have to consider not only synchronization and compute efficiency, but also communication bottlenecks as well. The only benefit that our code has over other methods, such as OpenMP, is that we can scale it beyond a single node. Our performance plot also shows that our simulation in MPI hits a ``roof" at around 11 GFLOPS. The slant indicates potentially our memory bound. When debugging performance, we could try to do higher particle count and aim to raise that roof as high as we can. The key and difficulty in this assignment seemed to be trying to hide the communication latencies, as we see from our embarassingly high MPI overhead.
@@ -121,5 +121,5 @@ When computing the performance, we see that we reach a peak of 10.84 GFLOPS, whi
 Everyone started off the exploration of MPI together. Andrew tried to divide columns of bins among each process while Brian and Xuan used a row approach. Brian was able to figure out how to add MPI directives to optimize code. Brian also figured out how to solve segmentation fault errors and finally put everything in working and presentable condition. In the end, Brian's approach was used as the final solution.
 
 \bibliographystyle{ieeetr}
-\bibliography{references} 
+\bibliography{references}
 \end{document}
