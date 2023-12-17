@@ -50,15 +50,18 @@ jobs:
     - name: Find PDF files
       id: find_pdfs
       run: |
-        echo "pdfs=$(ls *.pdf)" >> $GITHUB_ENV
+        cd hw/latex
+        echo "::set-output name=pdfs::$(ls *.pdf)"
 
-    - name: Upload PDFs
+  upload-pdfs:
+    needs: build-and-lint
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        pdf: ${{ fromJson(needs.build-and-lint.outputs.pdfs) }}
+    steps:
+    - name: Upload PDF
       uses: actions/upload-artifact@v2
       with:
         name: ${{ matrix.pdf }}
-        path: ${{ matrix.pdf }}
-      env:
-        pdfs: ${{ steps.find_pdfs.outputs.pdfs }}
-        strategy:
-          matrix:
-            pdf: ${{fromJson(env.pdfs)}}
+        path: hw/latex/${{ matrix.pdf }}
