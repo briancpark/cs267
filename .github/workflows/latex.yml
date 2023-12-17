@@ -46,25 +46,8 @@ jobs:
       working-directory: hw/latex
       run: make all
 
-    - name: Install jq
-      run: sudo apt-get install jq
-
-    - name: Find PDF files
-      working-directory: hw/latex
-      id: find_pdfs
-      run: |
-        pdf_list=$(ls hw/latex/*.pdf | jq -R -s -c 'split("\n")[:-1]')
-        echo "pdfs=$pdf_list" >> $GITHUB_OUTPUT
-
-  upload-pdfs:
-    needs: build-and-lint
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        pdf: ${{ fromJson(needs.build-and-lint.outputs.pdfs) }}
-    steps:
-      - name: Upload PDF
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ matrix.pdf }}
-          path: hw/latex/${{ matrix.pdf }}
+    - name: Upload PDFs
+      uses: actions/upload-artifact@v2
+      with:
+        name: Compiled-PDFs
+        path: ./*.pdf
