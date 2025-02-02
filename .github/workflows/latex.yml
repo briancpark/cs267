@@ -18,22 +18,8 @@ jobs:
     - name: Install LaTeX
       run: |
         sudo apt-get update
-        sudo apt-get install -y texlive-latex-base texlive-fonts-recommended texlive-latex-extra texlive-fonts-extra texlive-latex-recommended texlive-science
-
-    - name: Install cpanminus and Perl dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y cpanminus
-        sudo cpanm Log::Log4perl Log::Dispatch::File YAML::Tiny File::HomeDir Unicode::GCString
-
-    - name: Install latexindent
-      run: |
-        curl -L https://github.com/cmhughes/latexindent.pl/archive/master.zip -o latexindent.zip
-        unzip latexindent.zip -d latexindent
-        sudo cp -r latexindent/latexindent.pl-main/* /usr/local/bin/
-        sudo chmod +x /usr/local/bin/latexindent.pl
-        sudo mv /usr/local/bin/latexindent.pl /usr/local/bin/latexindent
-
+        sudo apt-get install -y texlive-latex-base texlive-fonts-recommended texlive-latex-extra texlive-fonts-extra texlive-science texlive-extra-utils
+    
     - name: Verify latexindent installation
       run: |
         latexindent --version
@@ -47,7 +33,7 @@ jobs:
       run: make all
 
     - name: Upload PDFs
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Compiled-PDFs
         path: hw/latex/*.pdf
